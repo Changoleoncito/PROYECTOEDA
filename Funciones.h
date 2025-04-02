@@ -19,53 +19,54 @@ typedef struct CiudadDatos{
     char *calle;
     Clase *producto;
     float *dinero;
-};
+}CiudadDatos;
 
 typedef struct comida
 {
     char *nombre;
     char *bebida;
-    char *cantidad;
-    int *sobrante;
+    float *cantidad;
+    float*sobrante;
 }comida;
 typedef struct belleza{
     char *nombre;
     char *marca;
-    char *precio;
-    int *sobrante;
+    float *precio;
+    float *sobrante;
 
     
 }belleza;
 typedef struct herramientas{
     char *nombre;
     char *marca;
-    char *precio;
-    int *sobrante;
+    float *precio;
+    float *sobrante;
 
 }herramientas;
 typedef struct ropa
 {
     char *nombre;
     char *marca;
-    char *precio;
+    float *precio;
     int *sobrante;
     
 }ropa;
 typedef struct juguetes{
     char *nombre;
     char *marca;
-    char *precio;
-    int *sobrante;
+    float *precio;
+    float *sobrante;
 
 }juguetes;
 typedef struct instrumentos
 {
     char *nombre;
     char *marca;
-    char *precio;
-    int *sobrante;
+    float *precio;
+    float *sobrante;
 }instrumentos;
-Clase *crearclase(Clase *clasenueva);
+Clase *crearclase();
+CiudadDatos *crearCiudadDatos();
 
 
 
