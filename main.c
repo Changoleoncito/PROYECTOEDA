@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include "menu.h"
+
+int main(void){
+    int opcion;
+    char menu[] = {"1)Imprimir", "2)Imprimir", "3)Imprimir", "4)Imprimir"};
+ 
+    do{
+        opcion = mostrar_menu(menu,4);
+        switch(opcion){
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;        
+        }
+    }while(opcion !=4);
+    return 0;
+}
