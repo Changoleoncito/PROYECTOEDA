@@ -65,6 +65,15 @@ typedef struct instrumentos
     float *precio;
     float *sobrante;
 }instrumentos;
+
+typedef struct{
+    int tipo;
+    char *nombre;
+    char *marca;
+    float precio;
+    int cantidad;
+}Articulo;
+
 Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
 void CapturarDatos();
