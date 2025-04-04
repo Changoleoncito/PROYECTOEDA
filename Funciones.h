@@ -67,6 +67,7 @@ typedef struct instrumentos
 }instrumentos;
 Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
+void CapturarDatos();
 
 
 
