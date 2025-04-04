@@ -123,3 +123,22 @@ CiudadDatos *crearCiudadDatos(){
     return nuevaCiudadDatos;
     
 }
+
+void capturarArticulo(){
+    int tipo;
+    int cantidad;
+    int aux;
+    Articulo *miArticulo;
+    miArticulo = (Articulo *)calloc(1,sizeof(Articulo));
+    miArticulo->marca = (char *)calloc(30,sizeof(char));
+    miArticulo->nombre = (char *)calloc(30,sizeof(char));
+    printf("Que tipo de articulo desea?\n 1.Comida 2.Belleza 3.Herraminetas 4.Ropa 5.Juguetes 6.Instrumentos\n");
+    scanf("%d",&tipo);
+    printf("Los siguientes Articulos se encuentran disponibles: ");
+    listarArticulos(tipo);
+    printf("¿Que articulo va a seleccionar?(Presione 0 para cancelar)\n");
+    scanf("%d",&aux);
+    printf("¿cuantos quiere añadir a su carrito?: ");
+    scanf("%d",&cantidad);
+
+}
