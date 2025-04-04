@@ -123,7 +123,38 @@ CiudadDatos *crearCiudadDatos(){
     return nuevaCiudadDatos;
     
 }
+int listarArticulos(int tipo){
+    char ruta[6][MAX_TEXTO]= {"./comida.csv","./belleza.csv","./herramientas.csv","./ropa.csv","./juguetes.csv","./instrumentos.csv"};
+    tipo--;
+    //printf("%s",ruta[tipo]); esta linea era para debuguear algo
+    FILE *archivo = fopen(ruta[tipo], "r");
+    if(archivo == NULL){
+        printf("Error al abrir el archivo");
+        return 0;
+    }
 
+    char linea[MAX_LONGITUD];
+    //printf("\nNOMBRE \tPRECIO \tOTROS");
+    int i=-1;
+    while(fgets(linea,sizeof(linea),archivo)){
+        i++;
+        linea[strcspn(linea,"\n")] = '\0'; // esta parte sirve para eliminar los saltos de linea;
+        if(i==0)continue;
+        if(i == 1)printf("\n");
+        char *nombre = strtok(linea, ",");
+        char *marca = strtok(NULL,",");
+        char *precio = strtok(NULL,",");
+        char *stock = strtok (NULL, ",");
+
+        float fprecio = atof(precio);
+        int fstock = atoi (stock);
+
+
+        printf("%-3d. %-30s %-20s %-9.2f\n",i,nombre,marca,fprecio);
+
+    }
+    fclose(archivo);
+}
 void capturarArticulo(){
     int tipo;
     int cantidad;
@@ -142,3 +173,5 @@ void capturarArticulo(){
     scanf("%d",&cantidad);
 
 }
+
+
