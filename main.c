@@ -3,7 +3,8 @@
 
 int main(void){
     int opcion;
-    char menu[] = {"1)Imprimir", "2)Imprimir", "3)Imprimir", "4)Imprimir"};
+    
+    char menu[] = {"1)Imprimir", "2)Realizar pedido", "3)Imprimir", "4)Imprimir"};
  
     do{
         opcion = mostrar_menu(menu,4);
