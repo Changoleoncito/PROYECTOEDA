@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "Funciones.h"
 #define MAX_LONGITUD 256
 /*
@@ -52,7 +53,7 @@ Clase *crearclase(){
     clasenueva->instrumentos=(instrumentos*)calloc(1,sizeof(instrumentos));
     if(clasenueva->instrumentos==NULL){
         printf("No se pudo asigar memoria para instrumentos");
-        exit(1);   
+        exit(1);
     }
     clasenueva->instrumentos->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
     clasenueva->instrumentos->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
@@ -123,9 +124,29 @@ CiudadDatos *crearCiudadDatos(){
         exit(1);
     }
     return nuevaCiudadDatos;
-    
+
 }
     */
+Articulo *crearArticulo(){
+    Articulo *miArticulo;
+    miArticulo = (Articulo *)calloc(1,sizeof(Articulo));
+    miArticulo->marca = (char *)calloc(30,sizeof(char));
+    miArticulo->nombre = (char *)calloc(30,sizeof(char));
+
+    if (miArticulo->marca==NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(0);
+    }
+    if (miArticulo->nombre==NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(0);
+    }
+    if (miArticulo==NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(0);
+    }
+    return miArticulo;
+}
 int listarArticulos(int tipo,Articulo *dispArticulos,int *n){
     char ruta[6][MAX_TEXTO]= {"./comida.csv","./belleza.csv","./herramientas.csv","./ropa.csv","./juguetes.csv","./instrumentos.csv"};
     tipo--;
@@ -161,7 +182,7 @@ int listarArticulos(int tipo,Articulo *dispArticulos,int *n){
 void capturarArticulo(Articulo *miArticulo){
     int tipo;
     int cantidad;
-    int aux,saux;
+    int aux;
     //Uso del arreglo para acceder a un producto
     Articulo *dispArticulos;
 
@@ -180,12 +201,12 @@ void capturarArticulo(Articulo *miArticulo){
         miArticulo->marca = dispArticulos[aux-1].marca;
         miArticulo->precio = dispArticulos[aux].precio;
         printf("¿cuantos quiere añadir a su carrito?: ");
-        scanf("%d",&saux);
-        while(saux > dispArticulos->cantidad){
+        scanf("%d",&cantidad);
+        while(cantidad > dispArticulos->cantidad){
             printf("No hay suficientes Articulos, selecciona una menor cantidad: ");
-            scanf("%d",&saux);
+            scanf("%d",&cantidad);
         }
-        miArticulo->cantidad = saux;
+        miArticulo->cantidad = cantidad;
         miArticulo->visible = 1;
     }
 
