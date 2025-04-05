@@ -98,6 +98,12 @@ void listar(Cola cola);
 char *borrarArticulo(Cola *cola,int *n);
 void inicializarCola(Cola *cola);
 
+void liberarClase(Clase *clase);
+void liberarCiudadDatos(CiudadDatos *ciudad);
+void liberarArticulo(Articulo *articulo);
+void liberarNodo(Nodo *nodo);
+void liberarCola(Cola *cola);
+
 
 
 
