@@ -78,6 +78,8 @@ Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
 void CapturarDatos();
 
+int listarArticulos(int tipo);
+void capturarArticulo();
 
 
 
