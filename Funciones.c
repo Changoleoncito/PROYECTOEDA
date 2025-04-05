@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Funciones.h"
+#define MAX_LONGITUD 256
+/*
 Clase *crearclase(){
     Clase *clasenueva;
     clasenueva=(Clase*)malloc(sizeof(Clase));
@@ -123,7 +125,8 @@ CiudadDatos *crearCiudadDatos(){
     return nuevaCiudadDatos;
     
 }
-int listarArticulos(int tipo){
+    */
+int listarArticulos(int tipo,Articulo *dispArticulos,int *n){
     char ruta[6][MAX_TEXTO]= {"./comida.csv","./belleza.csv","./herramientas.csv","./ropa.csv","./juguetes.csv","./instrumentos.csv"};
     tipo--;
     //printf("%s",ruta[tipo]); esta linea era para debuguear algo

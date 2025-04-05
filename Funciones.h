@@ -4,6 +4,7 @@
 #define MAX_TEXTO 30
 
 //Estructuras
+/*
 typedef struct Clase
 {
     comida *comida;
@@ -65,7 +66,7 @@ typedef struct instrumentos
     float *precio;
     float *sobrante;
 }instrumentos;
-
+*/
 typedef struct{
     int tipo;
     char *nombre;
@@ -83,12 +84,12 @@ typedef struct{
     Nodo *h,*t;
 }Cola;
 
-
+/*
 Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
-void CapturarDatos();
+void CapturarDatos();*/
 
-int listarArticulos(int tipo, Articulo *dispArticulos,int *n)
+int listarArticulos(int tipo, Articulo *dispArticulos,int *n);
 void capturarArticulo(Articulo *miArticulo);
 Articulo *crearArticulo();
 int colaVacia(Cola cola);
