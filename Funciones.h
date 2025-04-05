@@ -72,7 +72,17 @@ typedef struct{
     char *marca;
     float precio;
     int cantidad;
+    int visible;
 }Articulo;
+typedef struct nodo{
+    Articulo *miArticulo;
+    struct nodo *sig;
+}Nodo;
+
+typedef struct{
+    Nodo *h,*t;
+}Cola;
+
 
 Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
