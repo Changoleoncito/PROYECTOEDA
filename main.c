@@ -29,7 +29,14 @@ int main(void){
                 nameaux = borrarArticulo(cola,&aux);
                 printf("El articulo:  %s fue eliminado",nameaux);
                 break;
+            case 5: //por ahora aqui pondre las funciones para liberar la momoria.
+                liberarClase(miClase);
+                liberarCiudadDatos(miCiudad);
+                liberarCola(miCola);
+                printf("Memoria liberada. Saliendo del programa.\n");
+                break;
             default:
+                printf("Opcion no valida, intente de nuevo\n");
                 break;
         }
     }while(opcion !=5);
