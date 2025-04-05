@@ -88,10 +88,15 @@ Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
 void CapturarDatos();
 
-int listarArticulos(int tipo);
-void capturarArticulo();
-
-
+int listarArticulos(int tipo, Articulo *dispArticulos,int *n)
+void capturarArticulo(Articulo *miArticulo);
+Articulo *crearArticulo();
+int colaVacia(Cola cola);
+Cola *crearCola();
+void insertar(Cola *cola,Articulo *miarticulo);
+void listar(Cola cola);
+char *borrarArticulo(Cola *cola,int *n);
+void inicializarCola(Cola *cola);
 
 
 
