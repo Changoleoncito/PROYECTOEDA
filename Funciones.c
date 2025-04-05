@@ -155,23 +155,109 @@ int listarArticulos(int tipo){
     }
     fclose(archivo);
 }
-void capturarArticulo(){
+void capturarArticulo(Articulo *miArticulo){
     int tipo;
     int cantidad;
-    int aux;
-    Articulo *miArticulo;
-    miArticulo = (Articulo *)calloc(1,sizeof(Articulo));
-    miArticulo->marca = (char *)calloc(30,sizeof(char));
-    miArticulo->nombre = (char *)calloc(30,sizeof(char));
+    int aux,saux;
+    //Uso del arreglo para acceder a un producto
+    Articulo *dispArticulos;
+
+    int n=20;
+    dispArticulos = (Articulo *)calloc(n,sizeof(Articulo));
+
     printf("Que tipo de articulo desea?\n 1.Comida 2.Belleza 3.Herraminetas 4.Ropa 5.Juguetes 6.Instrumentos\n");
     scanf("%d",&tipo);
     printf("Los siguientes Articulos se encuentran disponibles: ");
-    listarArticulos(tipo);
+    listarArticulos(tipo,dispArticulos,&n);
+
     printf("¿Que articulo va a seleccionar?(Presione 0 para cancelar)\n");
     scanf("%d",&aux);
-    printf("¿cuantos quiere añadir a su carrito?: ");
-    scanf("%d",&cantidad);
+    if(aux != 0){
+        miArticulo->nombre = dispArticulos[aux-1].nombre;
+        miArticulo->marca = dispArticulos[aux-1].marca;
+        miArticulo->precio = dispArticulos[aux].precio;
+        printf("¿cuantos quiere añadir a su carrito?: ");
+        scanf("%d",&saux);
+        while(saux > dispArticulos->cantidad){
+            printf("No hay suficientes Articulos, selecciona una menor cantidad: ");
+            scanf("%d",&saux);
+        }
+        miArticulo->cantidad = saux;
+        miArticulo->visible = 1;
+    }
 
+
+}
+int colaVacia(Cola cola){
+    return cola.h== NULL ;
+}
+Cola *crearCola(){
+    Cola *nuevaCola;
+    //CREACIÓN DINÁMICA DE LA ESTRUCTURA COLA
+    nuevaCola=(Cola *)malloc( 1*sizeof(Cola ));
+    if (nuevaCola==NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(0);
+    }
+    //INICIALIZANDO h y t
+    nuevaCola->h= NULL;
+    nuevaCola->t= NULL;
+    return  nuevaCola ;
+}
+void insertar(Cola *cola,Articulo *miarticulo){
+    Nodo *nuevoNodo;
+    //CREA EL NODO
+    nuevoNodo=(Nodo *)malloc(sizeof( Nodo));
+    if (nuevoNodo == NULL){
+       printf("Error: memoria insuficiente...");
+       exit(0);
+    }
+    //1.ASIGNA VALORES AL NODO
+     nuevoNodo->miArticulo = miarticulo;
+     nuevoNodo->sig= NULL;
+    //2.INSERTA EL NODO EN LA COLA
+    if (colaVacia(*cola))
+        cola->h= cola->t= nuevoNodo;
+    else {
+        cola ->t->sig =  nuevoNodo;
+        cola->t = nuevoNodo;
+    }
+}
+void listar(Cola cola){
+    Nodo *q;
+    if (colaVacia(cola))
+        printf("\nNo hay datos en la fila...\n");
+    else{
+        printf("\t20Mi carrito: ");
+        int i = 1;
+        for(q= cola.h; q!= NULL ; q= q->sig){
+            if(q->miArticulo->visible){
+                printf("\nDatos del Articulo [%d]:\n Nombre: %s\nMarca: %s\n Precio:%.2f \n Cantidad: %i\n",i,q->miArticulo->nombre,q->miArticulo->marca,q->miArticulo->precio,q->miArticulo->cantidad);
+                i++;
+                }
+            }
+        }
+    printf("\n");
+}
+char *borrarArticulo(Cola *cola,int *n){
+    char *dato;
+    Nodo *q =cola->h;
+    Nodo *aux;
+    if (!colaVacia(*cola)){
+        if(cola->h==cola->t)
+            cola->h=cola->t= NULL;
+        else{
+            for(int i=0;i<(*n)-1;i++)q=q->sig;
+            q->miArticulo->visible = 0;
+        }
+            //cola->h = cola->h->sig;
+
+        dato =  q->miArticulo->nombre; //EXTRAE LA INFORMACIÓN
+        free(q); //LIBERA LA MEMORIA
+    }
+    else
+        printf("\nNo hay datos registrados...");
+    return dato;
 }
 
 
