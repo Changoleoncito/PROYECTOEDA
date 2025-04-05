@@ -7,7 +7,5 @@ typedef struct{
 
 void inicializar_pila(Pila *p);
 int pila_vacia(Pila *p);
-
 int insertar_pila(Pila *p, int opcion);
-
 int pop(Pila *p);
