@@ -1,16 +1,18 @@
 #include <stdio.h>
 #include "menu.h"
-
+#include "Funciones.h"
 int main(void){
     int opcion,aux;
+    char *nameaux;
     Articulo *miArticulo;
     Cola *cola;
     cola = crearCola();
-    miArticulo = crearArticulo;
-    char menu[] = {"1)Imprimir", "2)Realizar pedido", "3)Ver mi carrito", "4)Editar Pedido,5)Salir"};
+    miArticulo = crearArticulo();
+    char menu[]= "1)Imprimir , 2)Realizar pedido, 3)Ver mi carrito, 4)Editar Pedido,5)Salir";
  
     do{
-        opcion = mostrar_menu(menu,4);
+        printf("%s",menu);
+        scanf("%d",&opcion);
         switch(opcion){
             case 1:
                 break;
