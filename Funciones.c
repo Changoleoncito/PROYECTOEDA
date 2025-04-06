@@ -147,35 +147,40 @@ Articulo *crearArticulo(){
     }
     return miArticulo;
 }
-int listarArticulos(int tipo,Articulo *dispArticulos,int *n){
+void listarArticulos(int tipo,Articulo *dispArticulos){
     char ruta[6][MAX_TEXTO]= {"./comida.csv","./belleza.csv","./herramientas.csv","./ropa.csv","./juguetes.csv","./instrumentos.csv"};
     tipo--;
-    //printf("%s",ruta[tipo]); esta linea era para debuguear algo
+    printf("%s",ruta[tipo]);// esta linea era para debuguear algo
     FILE *archivo = fopen(ruta[tipo], "r");
     if(archivo == NULL){
         printf("Error al abrir el archivo");
-        return 0;
+        exit(0);
     }
 
     char linea[MAX_LONGITUD];
     //printf("\nNOMBRE \tPRECIO \tOTROS");
-    int i=-1;
+    int i=0;
     while(fgets(linea,sizeof(linea),archivo)){
-        i++;
         linea[strcspn(linea,"\n")] = '\0'; // esta parte sirve para eliminar los saltos de linea;
-        if(i==0)continue;
+        if(i==0){
+            i++;
+            continue; // esto es para no tomar en cuenta el inicio del documento;
+        }
         if(i == 1)printf("\n");
-        char *nombre = strtok(linea, ",");
-        char *marca = strtok(NULL,",");
+        char *fnombre = strtok(linea, ",");
+        char *fmarca = strtok(NULL,",");
         char *precio = strtok(NULL,",");
         char *stock = strtok (NULL, ",");
 
         float fprecio = atof(precio);
         int fstock = atoi (stock);
 
-
-        printf("%-3d. %-30s %-20s %-9.2f\n",i,nombre,marca,fprecio);
-
+        dispArticulos[(i-1)].nombre = strdup(fnombre);
+        dispArticulos[(i-1)].marca = strdup(fmarca);
+        dispArticulos[(i-1)].precio = fprecio;
+        dispArticulos[(i-1)].cantidad = fstock;
+        printf("%-3d. %-30s %-20s %-9.2f\n",i,fnombre,fmarca,fprecio);
+        i++;
     }
     fclose(archivo);
 }
@@ -192,7 +197,7 @@ void capturarArticulo(Articulo *miArticulo){
     printf("Que tipo de articulo desea?\n 1.Comida 2.Belleza 3.Herraminetas 4.Ropa 5.Juguetes 6.Instrumentos\n");
     scanf("%d",&tipo);
     printf("Los siguientes Articulos se encuentran disponibles: ");
-    listarArticulos(tipo,dispArticulos,&n);
+    listarArticulos(tipo,dispArticulos);
 
     printf("¿Que articulo va a seleccionar?(Presione 0 para cancelar)\n");
     scanf("%d",&aux);
@@ -266,7 +271,7 @@ void listar(Cola cola){
 char *borrarArticulo(Cola *cola,int *n){
     char *dato;
     Nodo *q =cola->h;
-    Nodo *aux;
+    //Nodo *aux;
     if (!colaVacia(*cola)){
         if(cola->h==cola->t)
             cola->h=cola->t= NULL;
