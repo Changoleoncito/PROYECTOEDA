@@ -8,8 +8,8 @@ int main(void){
     Cola *cola;
     cola = crearCola();
     miArticulo = crearArticulo();
-    char menu[]= "1)Imprimir , 2)Realizar pedido, 3)Ver mi carrito, 4)Editar Pedido,5)Salir";
- 
+    char menu[]= "\n1)Imprimir \n2)Realizar pedido \n3)Ver mi carrito \n4)Editar Pedido\n5)Salir\n";
+
     do{
         printf("%s",menu);
         scanf("%d",&opcion);
