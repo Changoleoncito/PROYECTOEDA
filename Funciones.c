@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "Funciones.h"
-#define MAX_LONGITUD 256
+
 /*
 Clase *crearclase(){
     Clase *clasenueva;
