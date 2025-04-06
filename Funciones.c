@@ -289,4 +289,112 @@ char *borrarArticulo(Cola *cola,int *n){
     return dato;
 }
 
+//funciones para liberar la memoria.
+// estas se utilizaran al momento de salir el programa o se vera su uso cuando veamos como queda el main.
+void liberarClase(Clase *clase) {
+    if (clase == NULL) return;
+
+    // Libera la memoria de belleza
+    if (clase->belleza != NULL) {
+        free(clase->belleza->nombre);
+        free(clase->belleza->marca);
+        free(clase->belleza->precio);
+        free(clase->belleza->sobrante);
+        free(clase->belleza);
+    }
+
+    // Libera la memoria de comida
+    if (clase->comida != NULL) {
+        free(clase->comida->nombre);
+        free(clase->comida->bebida);
+        free(clase->comida->cantidad);
+        free(clase->comida->sobrante);
+        free(clase->comida);
+    }
+
+    // Libera la memoria de herramientas
+    if (clase->herramientas != NULL) {
+        free(clase->herramientas->nombre);
+        free(clase->herramientas->marca);
+        free(clase->herramientas->precio);
+        free(clase->herramientas->sobrante);
+        free(clase->herramientas);
+    }
+
+    // Libera la memoria de instrumentos
+    if (clase->instrumentos != NULL) {
+        free(clase->instrumentos->nombre);
+        free(clase->instrumentos->marca);
+        free(clase->instrumentos->precio);
+        free(clase->instrumentos->sobrante);
+        free(clase->instrumentos);
+    }
+
+    // Libera la memoria de juguetes
+    if (clase->juguetes != NULL) {
+        free(clase->juguetes->nombre);
+        free(clase->juguetes->marca);
+        free(clase->juguetes->precio);
+        free(clase->juguetes->sobrante);
+        free(clase->juguetes);
+    }
+
+    // Libera la memoria de ropa
+    if (clase->ropa != NULL) {
+        free(clase->ropa->nombre);
+        free(clase->ropa->marca);
+        free(clase->ropa->precio);
+        free(clase->ropa->sobrante);
+        free(clase->ropa);
+    }
+
+    // Libera la estructura Clase
+    free(clase);
+}
+
+void liberarCiudadDatos(CiudadDatos *ciudad) {
+    if (ciudad == NULL) return;
+
+    free(ciudad->nombre);
+    free(ciudad->ciudad);
+    free(ciudad->calle);
+    free(ciudad->dinero);
+
+    // Libera la estructura Clase dentro de CiudadDatos
+    liberarClase(ciudad->producto);
+
+    // Libera la estructura CiudadDatos
+    free(ciudad);
+}
+
+void liberarArticulo(Articulo *articulo) {
+    if (articulo == NULL) return;
+
+    free(articulo->nombre);
+    free(articulo->marca);
+    free(articulo);
+}
+
+void liberarNodo(Nodo *nodo) {
+    if (nodo == NULL) return;
+
+    liberarArticulo(nodo->miArticulo);
+    free(nodo);
+}
+
+void liberarCola(Cola *cola) {
+    if (cola == NULL) return;
+
+    Nodo *q = cola->h;  
+    Nodo *sig;
+
+    while (q != NULL) {
+        sig = q->sig;  
+        q->sig = NULL;  
+        liberarNodo(q);  
+        q = sig; 
+    }
+    free(cola);
+}
+
 
