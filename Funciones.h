@@ -1,7 +1,8 @@
 #ifndef FUNCIONES_H_INCLUDED
 #define  FUNCIONES_H_INCLUDED
 
-#define MAX_TEXTO 30
+#define MAX_TEXTO 100
+#define MAX_LONGITUD 256
 
 //Estructuras
 /*
@@ -35,7 +36,7 @@ typedef struct belleza{
     float *precio;
     float *sobrante;
 
-    
+
 }belleza;
 typedef struct herramientas{
     char *nombre;
@@ -50,7 +51,7 @@ typedef struct ropa
     char *marca;
     float *precio;
     int *sobrante;
-    
+
 }ropa;
 typedef struct juguetes{
     char *nombre;
@@ -89,7 +90,7 @@ Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
 void CapturarDatos();*/
 
-int listarArticulos(int tipo, Articulo *dispArticulos,int *n);
+void listarArticulos(int tipo, Articulo *dispArticulos);
 void capturarArticulo(Articulo *miArticulo);
 Articulo *crearArticulo();
 int colaVacia(Cola cola);
