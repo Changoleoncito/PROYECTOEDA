@@ -1,43 +1,11 @@
 #ifndef FUNCIONES_H_INCLUDED
 #define  FUNCIONES_H_INCLUDED
-
 #define MAX_TEXTO 100
 #define MAX_LONGITUD 256
 
 //Estructuras
-/*
-typedef struct Clase
-{
-    comida *comida;
-    belleza*belleza;
-    herramientas *herramientas;
-    ropa *ropa;
-    juguetes *juguetes;
-    instrumentos *instrumentos;
-}Clase;
-typedef struct CiudadDatos{
-    char *nombre;
-    char *ciudad;
-    char *calle;
-    Clase *producto;
-    float *dinero;
-}CiudadDatos;
-
-typedef struct comida
-{
-    char *nombre;
-    char *bebida;
-    float *cantidad;
-    float*sobrante;
-}comida;
-typedef struct belleza{
-    char *nombre;
-    char *marca;
-    float *precio;
-    float *sobrante;
 
 
-}belleza;
 typedef struct herramientas{
     char *nombre;
     char *marca;
@@ -53,6 +21,7 @@ typedef struct ropa
     int *sobrante;
 
 }ropa;
+
 typedef struct juguetes{
     char *nombre;
     char *marca;
@@ -60,6 +29,7 @@ typedef struct juguetes{
     float *sobrante;
 
 }juguetes;
+
 typedef struct instrumentos
 {
     char *nombre;
@@ -67,6 +37,43 @@ typedef struct instrumentos
     float *precio;
     float *sobrante;
 }instrumentos;
+
+typedef struct belleza{
+    char *nombre;
+    char *marca;
+    float *precio;
+    float *sobrante;
+
+
+}belleza;
+
+typedef struct comida
+{
+    char *nombre;
+    char *bebida;
+    float *cantidad;
+    float*sobrante;
+}comida;
+
+typedef struct Clase
+{
+    comida *comida;
+    belleza*belleza;
+    herramientas *herramientas;
+    ropa *ropa;
+    juguetes *juguetes;
+    instrumentos *instrumentos;
+}Clase;
+
+typedef struct CiudadDatos{
+    char *nombre;
+    char *ciudad;
+    char *calle;
+    Clase *producto;
+    float *dinero;
+}CiudadDatos;
+/*
+
 */
 typedef struct{
     int tipo;
@@ -85,6 +92,14 @@ typedef struct{
     Nodo *h,*t;
 }Cola;
 
+typedef struct{
+    char nombre[10];
+    char *correo;
+    int pedidos;
+    float saldo;
+    int ID;
+    
+}Usuario;
 /*
 Clase *crearclase();
 CiudadDatos *crearCiudadDatos();
@@ -105,8 +120,9 @@ void liberarCiudadDatos(CiudadDatos *ciudad);
 void liberarArticulo(Articulo *articulo);
 void liberarNodo(Nodo *nodo);
 void liberarCola(Cola *cola);
-
-
+float pagar(Cola *cola);
+Usuario *crearUsuario();
+void imprimirDatos(Usuario usuario);
 
 
 
