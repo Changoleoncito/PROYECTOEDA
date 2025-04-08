@@ -1,11 +1,11 @@
 Nombre,Marca,Precio,Stock
-Taladro-percutor-800W,Bosch,1499.00,15
+Taladro,Bosch,1499.00,15
 Desarmador,Black+Decker,599.00,25
-Sierra-circular-1400W,Truper,1890.00,10
-Juego-de-llaves,Stanley,129.00,50
-Caja-de-herramientas,Truper,349.00,20
+Sierra,Truper,1890.00,10
+Juego de llaves,Stanley,129.00,50
+Caja de herramientas,Truper,349.00,20
 Multiherramienta,DeWalt,2990.00,8
-Lijadora-orbital,Skill,799.00,18
-MartilloUrrea,189.00,40
-Nivel-de-burbuja-60cm,Surtek,229.00,30
-Cinta-métrica,Klein Tools,109.00,60
+Lijadora orbital,Skill,799.00,18
+MartilloUrrea,189.00,40,10
+Nivel de burbuja 60cm,Surtek,229.00,30
+Cinta metrica,KleinTools,109.00,60
