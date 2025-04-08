@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include "Funciones.h"
+#include <time.h>
+#include<string.h>
 
-/*
 Clase *crearclase(){
     Clase *clasenueva;
     clasenueva=(Clase*)malloc(sizeof(Clase));
@@ -84,7 +84,7 @@ Clase *crearclase(){
     clasenueva->ropa->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
     clasenueva->ropa->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
     clasenueva->ropa->precio=(float*)calloc(1,sizeof(float));
-    clasenueva->ropa->sobrante=(float*)calloc(1,sizeof(float));
+    clasenueva->ropa->sobrante=(int*)calloc(1,sizeof(int));
     if(clasenueva->ropa->nombre==NULL|| clasenueva->ropa->marca==NULL||clasenueva->ropa->precio==NULL||clasenueva->ropa->sobrante==NULL){
         printf("No se pudo asigar memoria para los datos de juguetes");
         exit(1);
@@ -126,7 +126,7 @@ CiudadDatos *crearCiudadDatos(){
     return nuevaCiudadDatos;
 
 }
-    */
+    
 Articulo *crearArticulo(){
     Articulo *miArticulo;
     miArticulo = (Articulo *)calloc(1,sizeof(Articulo));
@@ -204,7 +204,7 @@ void capturarArticulo(Articulo *miArticulo){
     if(aux != 0){
         miArticulo->nombre = dispArticulos[aux-1].nombre;
         miArticulo->marca = dispArticulos[aux-1].marca;
-        miArticulo->precio = dispArticulos[aux].precio;
+        miArticulo->precio = dispArticulos[aux-1].precio;
         printf("¿cuantos quiere añadir a su carrito?: ");
         scanf("%d",&cantidad);
         while(cantidad > dispArticulos->cantidad){
@@ -282,13 +282,24 @@ char *borrarArticulo(Cola *cola,int *n){
             //cola->h = cola->h->sig;
 
         dato =  q->miArticulo->nombre; //EXTRAE LA INFORMACIÓN
-        free(q); //LIBERA LA MEMORIA
+        //free(q); //LIBERA LA MEMORIA <- Esta linea no va, si liberas q, borras la informacion, y esta funcion solo oculta los articulos del carrito, pero no los borra, eso es en otra funcion
     }
     else
         printf("\nNo hay datos registrados...");
     return dato;
 }
-
+float pagar(Cola *cola){
+    float total = 0;
+    Nodo *q;
+    q = cola->h;
+    for(q;q!= NULL;q = q->sig){
+        if(q->miArticulo->visible){
+            total+=((q->miArticulo->precio)*(q->miArticulo->cantidad));
+        }
+        
+    }
+    return total;
+}
 //funciones para liberar la memoria.
 // estas se utilizaran al momento de salir el programa o se vera su uso cuando veamos como queda el main.
 void liberarClase(Clase *clase) {
@@ -397,4 +408,28 @@ void liberarCola(Cola *cola) {
     free(cola);
 }
 
+Usuario* crearUsuario(){
+    Usuario *usuario;
+    srand(time(0));
+    usuario = (Usuario *)calloc(1,sizeof(Usuario));
+    for(int i=0;i<10;i++){
+        usuario->nombre[i] = rand() % (26) + 'a';   // para generar las letras 
+    }
+    
+   usuario->saldo = rand() % 2000;
+    usuario->correo = (char *)calloc(10,sizeof(char));
+    for(int i=0;i<10;i++)usuario->correo[i] = rand() % (26) + 'a'; 
+    usuario->ID = rand() %  10000;
+    return usuario;
+}
 
+void imprimirDatos(Usuario usuario){
+    printf("\nNombre: %s\n",usuario.nombre);
+    printf("\nCorreo: %s",usuario.correo);
+    if(usuario.ID % 2 == 0)printf("@gmail.com\n");
+    else printf("@outlook.com\n");
+    printf("\nID: %d\n",usuario.ID);
+    printf("\nSaldo: %.2f\n",usuario.saldo);
+    printf("\nPedidos: %d\n",usuario.pedidos);
+    
+}
