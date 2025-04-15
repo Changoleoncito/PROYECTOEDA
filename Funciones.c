@@ -3,130 +3,8 @@
 #include "Funciones.h"
 #include <time.h>
 #include<string.h>
-
-Clase *crearclase(){
-    Clase *clasenueva;
-    clasenueva=(Clase*)malloc(sizeof(Clase));
-    if(clasenueva==NULL){
-        printf("No se pudo asigar memoria para clase");
-        exit(1);
-    }
-    clasenueva->belleza=( belleza*)calloc(1,sizeof(belleza));
-    if(clasenueva->belleza==NULL){
-        printf("No se pudo asigar memoria para belleza");
-        exit(1);
-    }
-    clasenueva->belleza->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->belleza->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->belleza->precio=(float*)calloc(1,sizeof(float));
-    clasenueva->belleza->sobrante=(float*)calloc(1,sizeof(float));
-    if(clasenueva->belleza->nombre==NULL|| clasenueva->belleza->marca==NULL||clasenueva->belleza->precio==NULL||clasenueva->belleza->sobrante==NULL){
-        printf("No se pudo asigar memoria para los datos de belleza");
-        exit(1);
-    }
-
-    clasenueva->comida=(comida*)calloc(1,sizeof(comida));
-    if(clasenueva->comida==NULL){
-        printf("No se pudo asigar memoria para comida");
-        exit(1);
-    }
-    clasenueva->comida->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->comida->bebida=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->comida->cantidad=(float*)calloc(1,sizeof(float));
-    clasenueva->comida->sobrante=(float*)calloc(1,sizeof(float));
-    if(clasenueva->comida->bebida==NULL|| clasenueva->comida->cantidad==NULL||clasenueva->comida->nombre==NULL||clasenueva->comida->sobrante==NULL){
-        printf("No se pudo asigar memoria para los datos de comida");
-        exit(1);
-    }
-    clasenueva->herramientas=(herramientas*)calloc(1,sizeof(herramientas));
-    if(clasenueva->herramientas==NULL){
-        printf("No se pudo asignar memoria para herramientas");
-    }
-    clasenueva->herramientas->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->herramientas->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->herramientas->precio=(float*)calloc(1,sizeof(float));
-    clasenueva->herramientas->sobrante=(float*)calloc(1,sizeof(float));
-    if(clasenueva->herramientas->nombre==NULL|| clasenueva->herramientas->marca==NULL||clasenueva->herramientas->precio==NULL||clasenueva->herramientas->sobrante==NULL){
-        printf("No se pudo asigar memoria para los datos de herramienta");
-        exit(1);
-    }
-    clasenueva->instrumentos=(instrumentos*)calloc(1,sizeof(instrumentos));
-    if(clasenueva->instrumentos==NULL){
-        printf("No se pudo asigar memoria para instrumentos");
-        exit(1);
-    }
-    clasenueva->instrumentos->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->instrumentos->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->instrumentos->precio=(float*)calloc(1,sizeof(float));
-    clasenueva->instrumentos->sobrante=(float*)calloc(1,sizeof(float));
-    if(clasenueva->instrumentos->nombre==NULL|| clasenueva->instrumentos->marca==NULL||clasenueva->instrumentos->precio==NULL||clasenueva->instrumentos->sobrante==NULL){
-        printf("No se pudo asigar memoria para los datos de herramienta");
-        exit(1);
-    }
-    clasenueva->juguetes=(juguetes*)calloc(1,sizeof(juguetes));
-    if(clasenueva->juguetes==NULL){
-        printf("No se pudo asigar memoria para juguetes");
-        exit(1);
-    }
-    clasenueva->juguetes->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->juguetes->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->juguetes->precio=(float*)calloc(1,sizeof(float));
-    clasenueva->juguetes->sobrante=(float*)calloc(1,sizeof(float));
-    if(clasenueva->juguetes->nombre==NULL|| clasenueva->juguetes->marca==NULL||clasenueva->juguetes->precio==NULL||clasenueva->juguetes->sobrante==NULL){
-        printf("No se pudo asigar memoria para los datos de juguetes");
-        exit(1);
-    }
-    clasenueva->ropa=(ropa*)calloc(1,sizeof(ropa));
-    if(clasenueva->ropa==NULL){
-        printf("No se pudo asigar memoria para ropa");
-        exit(1);
-    }
-    clasenueva->ropa->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->ropa->marca=(char*)calloc(MAX_TEXTO,sizeof(char));
-    clasenueva->ropa->precio=(float*)calloc(1,sizeof(float));
-    clasenueva->ropa->sobrante=(int*)calloc(1,sizeof(int));
-    if(clasenueva->ropa->nombre==NULL|| clasenueva->ropa->marca==NULL||clasenueva->ropa->precio==NULL||clasenueva->ropa->sobrante==NULL){
-        printf("No se pudo asigar memoria para los datos de juguetes");
-        exit(1);
-    }
-    return clasenueva;
-}
-CiudadDatos *crearCiudadDatos(){
-    CiudadDatos *nuevaCiudadDatos;
-    nuevaCiudadDatos=(CiudadDatos*)malloc(sizeof(CiudadDatos));
-    if(nuevaCiudadDatos==NULL){
-        printf("No se pudo asignar memoria a nuevaciudaddatos");
-        exit(1);
-    }
-    nuevaCiudadDatos->calle=(char*)calloc(MAX_TEXTO,sizeof(char));
-    if(nuevaCiudadDatos->calle==NULL){
-        printf("No se pudo asignar memoria a calle");
-        exit(1);
-    }
-    nuevaCiudadDatos->ciudad=(char*)calloc(MAX_TEXTO,sizeof(char));
-    if(nuevaCiudadDatos->ciudad==NULL){
-        printf("No se pudo asignar memoria a ciudad");
-        exit(1);
-    }
-    nuevaCiudadDatos->dinero=(float*)calloc(1,sizeof(float));
-    if(nuevaCiudadDatos->dinero==NULL){
-        printf("No se pudo asignar memoria a dinero");
-        exit(1);
-    }
-    nuevaCiudadDatos->nombre=(char*)calloc(MAX_TEXTO,sizeof(char));
-    if(nuevaCiudadDatos->nombre==NULL){
-        printf("No se pudo asignar memoria a nombre");
-        exit(1);
-    }
-    nuevaCiudadDatos->producto=(Clase*)calloc(1,sizeof(Clase));
-    if(nuevaCiudadDatos->producto==NULL){
-        printf("No se pudo asignar memoria a producto");
-        exit(1);
-    }
-    return nuevaCiudadDatos;
-
-}
-    
+#define TAMANO 4 
+#define TAMANO_CALLE 30
 Articulo *crearArticulo(){
     Articulo *miArticulo;
     miArticulo = (Articulo *)calloc(1,sizeof(Articulo));
@@ -300,83 +178,61 @@ float pagar(Cola *cola){
     }
     return total;
 }
+PILA *crearPila(int max){
+    PILA *nuevaPila;
+    //1. crear la pila y el arreglo de la pila
+    nuevaPila = (PILA *)malloc(1*sizeof(PILA)); //CREA LA ESTRUCTURA PILA CON TODOS SUS ELEMENTOS
+    nuevaPila->arr= (char **)calloc(max , sizeof(char*));//CREANDO EL ARREGLO DE LA PILA
+    //2. INICIALIZA VALORES
+    nuevaPila->tope = -1;
+    nuevaPila->max = max;
+    return nuevaPila;
+}
+void listarPILA(PILA pila){
+    int i;
+    for (i= pila.tope; i >= 0; i--)
+        printf(" %s\n ",pila.arr[i]);
+}
+void ViajeEmpleado(){
+    srand(time(NULL));  //LLAMARLA EN EL MAIN PARA QUE SEA GLOBAL
+    int opcion,i,contador,yaesta;
+    contador=0;
+    PILA *nuevapila;
+    nuevapila=crearPila(4);
+    int repetidos[4];
+    char str[TAMANO][TAMANO_CALLE] = {"CALLE A", "CALLE B", "CALLE C", "CALLE D"};
+    char *str1[TAMANO]={"Insurgentes", "Reforma","Pedregal","Tasquena"};
+    printf("cual es su dirreccion\n1)Insurgentes\n2)Reforma\n3)Pedregal\n4)Tasquena\n");
+    scanf("%d",&opcion);
+        printf("preparando viaje...\n");
+        printf("Viaje a:\n");
+        while(contador<4){
+            i=rand()%4;
+            yaesta=0;
+            for(int j=0;j<contador;j++){
+                if(repetidos[j]==i){
+                    yaesta=1;
+                    break;
+                }
+            }
+            if(yaesta==0){
+                repetidos[contador]=i;
+                nuevapila->tope++;
+                nuevapila->arr[nuevapila->tope]=str[i];
+                printf("%s\n", str[i]);
+                contador++;
+            }
+        }
+        printf("Llego el pedido a %s\n",str1[opcion-1]);
+        printf("Repartidor de regreso...\n");
+        listarPILA(*nuevapila);
+        printf("\n");
+        printf("Regreso");
+        
+ }
 //funciones para liberar la memoria.
 // estas se utilizaran al momento de salir el programa o se vera su uso cuando veamos como queda el main.
-void liberarClase(Clase *clase) {
-    if (clase == NULL) return;
 
-    // Libera la memoria de belleza
-    if (clase->belleza != NULL) {
-        free(clase->belleza->nombre);
-        free(clase->belleza->marca);
-        free(clase->belleza->precio);
-        free(clase->belleza->sobrante);
-        free(clase->belleza);
-    }
-
-    // Libera la memoria de comida
-    if (clase->comida != NULL) {
-        free(clase->comida->nombre);
-        free(clase->comida->bebida);
-        free(clase->comida->cantidad);
-        free(clase->comida->sobrante);
-        free(clase->comida);
-    }
-
-    // Libera la memoria de herramientas
-    if (clase->herramientas != NULL) {
-        free(clase->herramientas->nombre);
-        free(clase->herramientas->marca);
-        free(clase->herramientas->precio);
-        free(clase->herramientas->sobrante);
-        free(clase->herramientas);
-    }
-
-    // Libera la memoria de instrumentos
-    if (clase->instrumentos != NULL) {
-        free(clase->instrumentos->nombre);
-        free(clase->instrumentos->marca);
-        free(clase->instrumentos->precio);
-        free(clase->instrumentos->sobrante);
-        free(clase->instrumentos);
-    }
-
-    // Libera la memoria de juguetes
-    if (clase->juguetes != NULL) {
-        free(clase->juguetes->nombre);
-        free(clase->juguetes->marca);
-        free(clase->juguetes->precio);
-        free(clase->juguetes->sobrante);
-        free(clase->juguetes);
-    }
-
-    // Libera la memoria de ropa
-    if (clase->ropa != NULL) {
-        free(clase->ropa->nombre);
-        free(clase->ropa->marca);
-        free(clase->ropa->precio);
-        free(clase->ropa->sobrante);
-        free(clase->ropa);
-    }
-
-    // Libera la estructura Clase
-    free(clase);
-}
-
-void liberarCiudadDatos(CiudadDatos *ciudad) {
-    if (ciudad == NULL) return;
-
-    free(ciudad->nombre);
-    free(ciudad->ciudad);
-    free(ciudad->calle);
-    free(ciudad->dinero);
-
-    // Libera la estructura Clase dentro de CiudadDatos
-    liberarClase(ciudad->producto);
-
-    // Libera la estructura CiudadDatos
-    free(ciudad);
-}
 
 void liberarArticulo(Articulo *articulo) {
     if (articulo == NULL) return;

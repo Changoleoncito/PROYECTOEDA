@@ -52,6 +52,7 @@ int main(void){
                         printf("\nConfirme su pago: Presione 0 para cancelar y 1 para confirmar\n");
                         scanf("%d",&aux);
                         if(aux){
+                            ViajeEmpleado();
                             usuario->saldo-=pagoTotal;
                             printf("\nSaldo actual: $%.2f\n",pagoTotal);
 
