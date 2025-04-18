@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include "menu.h"
-#include "Funciones.h"
+#include "funciones.h"
 
 int main(void){
-   
+    
     int opcion,aux;
     char *nameaux;
     float pagoTotal;
@@ -13,70 +12,56 @@ int main(void){
     miArticulo = crearArticulo();
     Usuario *usuario;
     usuario = crearUsuario();
-    char menu[]= "\n1)Imprimir \n2)Añadir al carrito \n3)Ver mi carrito \n4)Editar Pedido\n5)Pagar\n6)Mi cuenta\n";
-    
+    miCuenta(usuario);
+    char menu[] = "\n----MENÚ PRINCIPAL---- \n1) Información personal \n2) Explorar \n3) Buscar productos \n4) Mi carrito \n5) Rastrear pedido \n6) Salir \nIngrese opción: ";
     do{
-        printf("%s",menu);
-        scanf("%d",&opcion);
+        printf("%s", menu);
+        scanf("%d", &opcion);
         switch(opcion){
-            case 1:
+            case 1: //Información personal
+                imprimirUsuario(usuario);
                 break;
-            case 2:
+            case 2: //Explorar
                 miArticulo = crearArticulo();
                 capturarArticulo(miArticulo);
-                insertar(cola,miArticulo);
+                insertar(cola, miArticulo);
                 break;
-            case 3:
+            case 3: //Buscar productos
                 listar(*cola);
                 break;
-            case 4:
+            case 4: //Mi carrito
                 if(!colaVacia(*cola)){
                     listar(*cola);
                     printf("Que Articulo desea eliminar?: ");
-                    scanf("%d",&aux);
-                    nameaux = borrarArticulo(cola,&aux);
-                    printf("El articulo:  %s fue eliminado",nameaux);
+                    scanf("%d", &aux);
+                    nameaux = borrarArticulo(cola, &aux);
+                    printf("El articulo:  %s fue eliminado", nameaux);
                 }else{
                     printf("\nNo hay articulos en el carrito\n");
                 }
-                    
-
-                
                 break;
-            case 5: 
+            case 5: //Rastrear pedido
                 if(!colaVacia(*cola)){
                     pagoTotal = pagar(cola);
-                    printf("El total es de $%.2f",pagoTotal);
+                    printf("El total es de $%.2f", pagoTotal);
                     if(usuario->saldo < pagoTotal) printf("\nSaldo Insuficiente\n");
                     else{
                         printf("\nConfirme su pago: Presione 0 para cancelar y 1 para confirmar\n");
-                        scanf("%d",&aux);
+                        scanf("%d", &aux);
                         if(aux){
-                            ViajeEmpleado();
-                            usuario->saldo-=pagoTotal;
-                            printf("\nSaldo actual: $%.2f\n",pagoTotal);
-
+                            usuario->saldo -= pagoTotal;
+                            printf("\nSaldo actual: $%.2f\n", pagoTotal);
                         }
                     }
                 }else{
                     printf("\nNo hay articulos en el carrito\n");
                 }
                 break;
-            case 6:
-                imprimirDatos(*usuario);
-                break;
-            case 7:
-                //por ahora aqui pondre las funciones para liberar la momoria.
-                //liberarClase(miClase);
-                //liberarCiudadDatos(miCiudad);
-                liberarCola(cola);
-                printf("Memoria liberada. Saliendo del programa.\n");
-                break;
-
-            default:
-                printf("Opcion no valida, intente de nuevo\n");
-                break;
         }
-    }while(opcion !=7);
+    }while(opcion != 6);
+    //liberarClase(miClase);
+    //liberarCiudadDatos(miCiudad);
+    liberarCola(cola);
+    printf("Gracias por usar SellTrack\n");
     return 0;
 }
