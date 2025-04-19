@@ -85,7 +85,6 @@ typedef struct{
     char *correo;
     char *password;
     long telefono;
-    int pedidos;
     char *tarjeta;
     const char *tipoTarjeta;
     float saldo;
@@ -116,10 +115,10 @@ void liberarUsuario(Usuario *usuario);
 
 float pagar(Cola *cola);
 Usuario *crearUsuario();
-int miCuenta(Usuario *usuario);
-int registrarse(Usuario *usuario);
+Usuario *miCuenta(Usuario *usuario);
+int registrarse();
 int agregarTarjeta(Usuario *usuario);
-int iniciarSesion(Usuario *usuario);
+Usuario *iniciarSesion();
 void imprimirUsuario(Usuario *usuario);
 void encriptarBasico(char *password);
 void desencriptarBasico(char *password);

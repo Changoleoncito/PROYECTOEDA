@@ -11,9 +11,8 @@ int main(void){
     cola = crearCola();
     miArticulo = crearArticulo();
     Usuario *usuario;
-    usuario = crearUsuario();
-    miCuenta(usuario);
-    char menu[] = "\n----MENÚ PRINCIPAL---- \n1) Información personal \n2) Explorar \n3) Buscar productos \n4) Mi carrito \n5) Rastrear pedido \n6) Salir \nIngrese opción: ";
+    usuario = miCuenta(usuario);
+    char menu[] = "\n---- MENÚ PRINCIPAL ----\n1) Información personal\n2) Explorar\n3) Buscar productos\n4) Mi carrito\n5) Rastrear pedido\n6) Salir\nIngrese opción: ";
     do{
         printf("%s", menu);
         scanf("%d", &opcion);

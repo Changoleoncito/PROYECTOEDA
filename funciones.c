@@ -147,12 +147,12 @@ Articulo *crearArticulo(){
     return miArticulo;
 }
 
-void listarArticulos(int tipo, Articulo *dispArticulos){
+void listarArticulos(int arc, Articulo *dispArticulos){
     const char *ruta[6] = {"./farmacia.csv","./belleza.csv","./herramientas.csv","./ropa.csv","./juguetes.csv","./instrumentos.csv"};
-    tipo--;
-    FILE *archivo = fopen(ruta[tipo], "r");
+    arc--;
+    FILE *archivo = fopen(ruta[arc], "r");
     if(archivo == NULL){
-        printf("Error al abrir el archivo");
+        printf("Error al abrir el archivo.\n");
         exit(1);
     }
     char linea[MAX_LONGITUD];
@@ -161,7 +161,7 @@ void listarArticulos(int tipo, Articulo *dispArticulos){
         linea[strcspn(linea, "\n")] = '\0'; //eliminar los saltos de linea;
         if(i == 0){
             i++;
-            continue; //no tomar en cuenta el inicio del documento;
+            continue; //No tomar en cuenta el primer renglón;
         }
         if(i == 1)printf("\n");
         char *fnombre = strtok(linea, ",");
@@ -181,19 +181,19 @@ void listarArticulos(int tipo, Articulo *dispArticulos){
 }
 
 void capturarArticulo(Articulo *miArticulo){
-    int opcion, tipo, cantidad, aux;
+    int opcion, arc, cantidad, aux;
     //Uso del arreglo para acceder a un producto
     Articulo *dispArticulos;
     int n = 20;
     dispArticulos = (Articulo *)calloc(n, sizeof(Articulo));
-    printf("\n----EXPLORAR---- \n1) Categorías \n2) Más vendidos \n3) Mejor valorados \n4) Salir \nIngrese opción: ");
+    printf("\n---- EXPLORAR ----\n1) Categorías\n2) Más vendidos\n3) Mejor valorados\n4) Salir\nIngrese opción: ");
     scanf("%d", &opcion);
     switch(opcion){
     case 1:
-        printf("\n----CATEGORÍAS---- \n1) Comida \n2) Belleza \n3) Herraminetas \n4) Ropa \n5) Juguetes \n6) Instrumentos \nIngrese opción: ");
-        scanf("%d", &tipo);
+        printf("\n---- CATEGORÍAS ----\n1) Farmacia\n2) Belleza\n3) Herraminetas\n4) Ropa\n5) Juguetes\n6) Instrumentos\nIngrese opción: ");
+        scanf("%d", &arc);
         printf("\nSe encientran disponibles los siguientes productos:");
-        listarArticulos(tipo, dispArticulos);
+        listarArticulos(arc, dispArticulos);
         printf("Ingrese el artículo a seleccionar (Presione 0 para cancelar)\n");
         scanf("%d", &aux);
         if(aux != 0){
@@ -203,7 +203,7 @@ void capturarArticulo(Articulo *miArticulo){
             printf("Ingrese la cantidad de articulos que desea agregar al carrito: ");
             scanf("%d", &cantidad);
             while(cantidad > dispArticulos->cantidad){
-                printf("No hay suficiente stock, seleccione otra cantidad: ");
+                printf("No hay suficiente stock. Seleccione otra cantidad: ");
                 scanf("%d", &cantidad);
             }
             miArticulo->cantidad = cantidad;
@@ -254,7 +254,7 @@ void listar(Cola cola){
     if(colaVacia(cola))
         printf("\nNo hay datos en la fila...\n");
     else{
-        printf("\n-----MI CARRITO-----\n");
+        printf("\n----- MI CARRITO -----\n");
         int i = 1;
         for(q = cola.h; q != NULL ; q = q->sig){
             if(q->miArticulo->visible){
@@ -401,47 +401,48 @@ void liberarUsuario(Usuario *usuario){
 }
 
 Usuario* crearUsuario(){
-    Usuario *usuario;
-    srand(time(0));
-    usuario = (Usuario *)calloc(1, sizeof(Usuario));
+    Usuario *usuario = usuario = (Usuario *)calloc(1, sizeof(Usuario));
     if(!usuario) return NULL;
     usuario->nombre = (char *)calloc(MAX_TEXTO, sizeof(char));
     usuario->correo = (char *)calloc(MAX_TEXTO, sizeof(char));
     usuario->password = (char *)calloc(MAX_TEXTO, sizeof(char));
-    usuario->tarjeta = (char *)calloc(16, sizeof(char));
-    usuario->tipoTarjeta = (char *)calloc(10, sizeof(char));
-    usuario->saldo = rand() % 1000;
-    usuario->ID = rand() %  10000;
+    usuario->tarjeta = (char *)calloc(17, sizeof(char));
+    usuario->tipoTarjeta = (char *)calloc(11, sizeof(char));
     return usuario;
 }
 
-int miCuenta(Usuario *usuario){
+Usuario *miCuenta(Usuario *usuario){
     int opcion;
     do{
-        printf("\n----BIENVENIDO A SELLTRACK---- \n1) Iniciar sesión \n2) Registrarse \n3) Salir \nIngrese opción: ");
+        printf("\n---- BIENVENIDO A SELLTRACK ----\n1) Iniciar sesión\n2) Registrarse\n3) Salir\nIngrese opción: ");
         scanf("%d", &opcion);
         switch(opcion){
             case 1:
-                iniciarSesion(usuario);
-                return 0;
+                usuario = iniciarSesion();
+                return usuario;
                 break;
             case 2:
-                registrarse(usuario);
+                registrarse();
                 break;
             case 3:
                 exit(0);
                 break;
         }
     }while(opcion != 3);
-    return 0;
+    exit(0);
 }
 
-int registrarse(Usuario *usuario){
-    FILE *archivo = fopen("usuarios.txt", "a");
+int registrarse(){
+    Usuario *usuario = crearUsuario();
+    srand(time(0));
+
+    FILE *archivo = fopen("usuarios.csv", "a");
     if(archivo == NULL){
         printf("Error al abrir el archivo");
         exit(1);
     }
+
+    printf("\n---- REGISTRARSE ----\n");
 
     printf("Ingrese su correo: ");
     getchar();
@@ -467,9 +468,11 @@ int registrarse(Usuario *usuario){
 
     agregarTarjeta(usuario);
 
+    usuario->saldo = rand() % 1000;
+    usuario->ID = rand() %  10000;
+
     fprintf(archivo, "%s,%s,%s,%ld,%s,%s,%.2f,%d\n", usuario->correo, usuario->password, usuario->nombre, usuario->telefono, usuario->tarjeta, usuario->tipoTarjeta, usuario->saldo, usuario->ID);
     fclose(archivo);
-    //liberarUsuario(usuario);
     printf("Sus datos han sido registrados correctamente\n");
     return 0;
 }
@@ -490,43 +493,91 @@ int agregarTarjeta(Usuario *usuario){
     return 0;
 }
 
-int iniciarSesion(Usuario *usuario){
+Usuario *iniciarSesion(){
     char auxcorreo[MAX_TEXTO];
     char auxpassword[MAX_TEXTO];
     char linea[MAX_LONGITUD];
+    int intentos = 3;
+    Usuario *usuario;
 
-    FILE *archivo = fopen("usuarios.txt", "r");
-    if(archivo == NULL){
-        printf("Error al abrir el archivo");
-        exit(1);
-    }
+    while(intentos > 0){
+        printf("\n---- INICIAR SESIÓN ----\n");
 
-
-
-    printf("Ingrese su correo: ");
-    getchar();
-    fgets(auxcorreo, sizeof(auxcorreo), stdin);
-    auxcorreo[strcspn(auxcorreo, "\n")] = '\0';
-    while(strcmp(auxcorreo, usuario->correo) != 0){
-        printf("Ingrese un correo válido: ");
-        fgets(auxcorreo, sizeof(auxcorreo), stdin);
+        // Solicitar credenciales
+        printf("Ingrese su correo: ");
+        getchar();
+        fgets(auxcorreo, MAX_TEXTO, stdin);
         auxcorreo[strcspn(auxcorreo, "\n")] = '\0';
+
+        printf("Ingrese su contraseña: ");
+        fgets(auxpassword, MAX_TEXTO, stdin);
+        auxpassword[strcspn(auxpassword, "\n")] = '\0';
+
+        // Encriptar contraseña ingresada para comparación
+        encriptarBasico(auxpassword);
+
+        FILE *archivo = fopen("usuarios.csv", "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo de usuarios\n");
+            return NULL;
+        }
+
+        int encontrado = 0;
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *token = strtok(linea, ",");
+            if (token && strcmp(token, auxcorreo) == 0){
+                usuario = crearUsuario();
+                if(usuario){
+                    // Asignar campos con verificación
+                    strcpy(usuario->correo, token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) strcpy(usuario->password, token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) strcpy(usuario->nombre, token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) usuario->telefono = atol(token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) strcpy(usuario->tarjeta, token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) usuario->tipoTarjeta = strdup(token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) usuario->saldo = atof(token);
+                    
+                    token = strtok(NULL, ",");
+                    if (token) usuario->ID = atoi(token);
+
+                    // Verificar contraseña
+                    if (strcmp(usuario->password, auxpassword) == 0){
+                        encontrado = 1;
+                        desencriptarBasico(usuario->password);
+                        break;
+                    } else {
+                        liberarUsuario(usuario);
+                        usuario = NULL;
+                    }
+                }
+            }
+        }
+        fclose(archivo);
+
+        if(encontrado){
+            return usuario;
+        }else{
+            intentos--;
+            printf("\nSus datos son incorrectos.Intente de nuevo.\n");
+        }
     }
 
-    strcpy(password_copia, usuario->password);
-    desencriptarBasico(password_copia);
-
-    printf("Ingrese su contraseña: ");
-    fgets(usuario->password, sizeof(usuario->password), stdin);
-    usuario->password[strcspn(usuario->password, "\n")] = '\0';
-    while(strcmp(usuario->password, password_copia) != 0){
-        printf("Contraseña incorrecta. Intente de nuevo: ");
-        fgets(usuario->password, sizeof(usuario->password), stdin);
-        usuario->password[strcspn(usuario->password, "\n")] = '\0';
-    }
-
-    fclose(archivo);
-    return 0;
+    printf("\nDemasiados intentos fallidos. Vuelva a intentarlo más tarde.\n");
+    exit(1);
 }
 
 void imprimirUsuario(Usuario *usuario){
