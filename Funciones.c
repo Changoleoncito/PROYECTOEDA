@@ -189,9 +189,10 @@ PILA *crearPila(int max){
     return nuevaPila;
 }
 void listarPILA(PILA pila){
+    char **q=&(pila.arr[pila.tope]);
     int i;
-    for (i= pila.tope; i >= 0; i--)
-        printf(" %s\n ",pila.arr[i]);
+    for (i= pila.tope; i >= 0; i--,q--)
+        printf(" %s\n ",*q);
 }
 void ViajeEmpleado(){
     srand(time(NULL));  //LLAMARLA EN EL MAIN PARA QUE SEA GLOBAL
