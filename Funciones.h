@@ -59,6 +59,7 @@ void imprimirDatos(Usuario usuario);
 PILA *crearPila(int max);
 void listarPILA(PILA pila);
 void ViajeEmpleado();
+void Estadisticas();
 
 
 

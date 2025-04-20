@@ -78,5 +78,6 @@ int main(void){
                 break;
         }
     }while(opcion !=7);
+    Estadisticas();
     return 0;
 }

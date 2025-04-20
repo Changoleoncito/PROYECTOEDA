@@ -3,8 +3,10 @@
 #include "Funciones.h"
 #include <time.h>
 #include<string.h>
+#include <math.h>
 #define TAMANO 4 
 #define TAMANO_CALLE 30
+#define MAX_ARTICULOS 30
 Articulo *crearArticulo(){
     Articulo *miArticulo;
     miArticulo = (Articulo *)calloc(1,sizeof(Articulo));
@@ -289,4 +291,92 @@ void imprimirDatos(Usuario usuario){
     printf("\nSaldo: %.2f\n",usuario.saldo);
     printf("\nPedidos: %d\n",usuario.pedidos);
     
+}
+void Estadisticas(){
+    int tipo,cantidadproductos,stocktotal,longitudmayor,longitudmenor;
+    float preciomayor,suma,promedio,preciomenor,promediostock,stockmayor,stockmenor,mayorvalortotal,precios[MAX_ARTICULOS],desviacionestandar;
+    char nombremayor[100],nombremenor[100],stockmayorn[100],stockmenorn[100],nombrelargo[100],nombrecorto[100],productovalioso[100];         
+    preciomayor=promedio=suma=preciomenor=stocktotal=cantidadproductos=longitudmayor=longitudmenor=desviacionestandar=mayorvalortotal = 0;
+    char ruta[6][MAX_TEXTO]= {"./comida.csv","./belleza.csv","./herramientas.csv","./ropa.csv","./juguetes.csv","./instrumentos.csv"};
+    printf("Que tipo de articulo desea obtener su estadistica?\n 1.Comida 2.Belleza 3.Herraminetas 4.Ropa 5.Juguetes 6.Instrumentos\n");
+    scanf("%d",&tipo);
+    tipo--;
+    FILE *archivo = fopen(ruta[tipo], "r");
+    if(archivo == NULL){
+        printf("Error al abrir el archivo");
+        exit(0);
+    }
+    char linea[MAX_LONGITUD];
+    //printf("\nNOMBRE \tPRECIO \tOTROS");
+    int i=0,n=0;
+    while(fgets(linea,sizeof(linea),archivo)){
+        linea[strcspn(linea,"\n")] = '\0'; // esta parte sirve para eliminar los saltos de linea;
+        if(i==0){
+            i++;
+            continue; // esto es para no tomar en cuenta el inicio del documento;
+        }
+        if(i == 1)printf("\n");
+        char *fnombre = strtok(linea, ",");
+        char *fmarca = strtok(NULL,",");
+        char *precio = strtok(NULL,",");
+        char *stock = strtok (NULL, ",");
+
+        float fprecio = atof(precio);
+        int fstock = atoi (stock);
+        if(preciomayor<fprecio){
+            preciomayor=fprecio;
+            strcpy(nombremayor,fnombre);
+        }
+        if((preciomenor>fprecio)||(preciomenor==0)){
+            preciomenor=fprecio;
+            strcpy(nombremenor,fnombre);
+        }
+        if(stockmayor<fstock){
+            stockmayor=fstock;
+            strcpy(stockmayorn,fnombre);
+        }
+        if((stockmenor>fstock)||(stockmenor==0)){
+            stockmenor=fstock;
+            strcpy(stockmenorn,fnombre);
+        }
+        if(strlen(fnombre) > longitudmayor){
+            longitudmayor = strlen(fnombre);
+            strcpy(nombrelargo, fnombre);
+        }
+        if((strlen(fnombre) < longitudmenor)||(longitudmenor==0)){
+            longitudmenor = strlen(fnombre);
+            strcpy(nombrecorto, fnombre);
+        }
+        float valorTotal = fprecio * fstock;
+        if(valorTotal > mayorvalortotal){
+            mayorvalortotal = valorTotal;
+            strcpy(productovalioso, fnombre);
+        }
+        precios[n]=fprecio;
+        n++;
+        suma=suma+fprecio;
+        stocktotal=stocktotal+fstock;
+        cantidadproductos=cantidadproductos+1;
+
+    }
+    promedio=suma/cantidadproductos;
+    promediostock=stocktotal/cantidadproductos;
+    for(int j=0; j<cantidadproductos;j++){
+        desviacionestandar+=pow(precios[j]-promedio,2);
+    }
+    desviacionestandar=sqrt(desviacionestandar/cantidadproductos);
+
+
+    
+    printf("El precio mayor es: %s  %f\n", nombremayor,preciomayor);
+    printf("El precio menor es: %s  %f\n", nombremenor,preciomenor);
+    printf("Stock mayor: %s %f\n", stockmayorn, stockmayor);
+    printf("El stock menor: %s %f\n", stockmenorn, stockmenor);
+    printf("Promedio de precios: %f\n", promedio);
+    printf("stock total: %d\n", stocktotal);
+    printf("El promedio de stock es: %f\n", promediostock);
+    printf("Nombre más largo: %s  con %d caracteres)\n", nombrelargo, longitudmayor);
+    printf("Nombre más corto: %s con %d caracteres)\n", nombrecorto, longitudmenor);
+    printf("Producto con mayor valor total (precio x stock): %s ($%.2f)\n", productovalioso, mayorvalortotal);
+    printf("desviacion estandar: %2.f", desviacionestandar);
 }
