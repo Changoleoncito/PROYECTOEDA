@@ -1,11 +1,11 @@
-Nombre,Marca,Precio,Stock
-Base-de-maquillaje-Fit-Me,Maybelline,189.00,25
-Labial-SuperStay-Matte-Ink,Maybelline,149.00,40
-Paleta-de-sombras,Urban Decay,1199.00,10
-Rímel-Lash-Sensational,Maybelline,159.00,30
-Crema-Hydro-Boost,Neutrogena,240.00,50
-Corrector-Instant-Age,Maybelline,169.00,35
-Serum-Niacinamida,The Ordinary,320.00,20
-Protector-solar-Anthelios,La Roche-Posay,450.00,18
-Tónico-facial,The Body Shop,270.00,22
-Desmaquillante-bifásico,Garnier,99.00,45
+Nombre,Marca,Precio,Stock,Ventas
+Base de maquillaje Fit Me,Maybelline,189.00,25,712
+Labial SuperStay Matte Ink,Maybelline,149.00,40,894
+Paleta de sombras,Urban Decay,1199.00,10,117
+Rímel Lash Sensational,Maybelline,159.00,30,654
+Crema Hydro Boost,Neutrogena,240.00,50,751
+Corrector Instant Age,Maybelline,169.00,35,193
+Serum Niacinamida,The Ordinary,320.00,20,150
+Protector solar Anthelios,La Roche Posay,450.00,18,764
+Tónico facial,The Body Shop,270.00,22,88
+Desmaquillante bifásico,Garnier,99.00,45,550
