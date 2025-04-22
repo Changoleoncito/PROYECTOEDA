@@ -880,31 +880,31 @@ void desencriptarBasico(char *password){
     }
 }
 
-int check(const char *card_number){ // Luhn algorithm
+int check(const char *numTarjeta){ // Luhn algorithm
     int add = 0;
-    int length = strlen(card_number);
-    int double_digit = 0;
-    for(int i = length - 1; i >= 0; i--){
-        int digit = card_number[i] - '0';
-        if(double_digit){
+    int longitud = strlen(numTarjeta);
+    int dobledigito = 0;
+    for(int i = longitud - 1; i >= 0; i--){
+        int digit = numTarjeta[i] - '0';
+        if(dobledigito ){
             digit = digit * 2;
             if(digit > 9){
                 digit = digit - 9;
             }
         }
         add = add + digit;
-        double_digit = !double_digit;
+        dobledigito  = !doubledigito;
     }
     return(add % 10 == 0);
 }
 
-const char *card_type(const char *card_number){
-    int length = strlen(card_number);
-    if((length == 15) && (card_number[0] == '3') && (card_number[1] == '4' || card_number[1] == '7')){
+const char *card_type(const char *numTarjeta){
+    int longitud = strlen(numTarjeta);
+    if((longitud == 15) && (numTarjeta[0] == '3') && (numTarjeta[1] == '4' || numTarjeta[1] == '7')){
         return "AMEX";
-    }else if((length == 16) && (card_number[0] == '5') && (card_number[1] >= '1' && card_number[1] <= '5')){
+    }else if((longitud == 16) && (numTarjeta[0] == '5') && (numTarjeta[1] >= '1' && numTarjeta[1] <= '5')){
         return "MASTERCARD";
-    }else if((length == 13 || length == 16) && (card_number[0] == '4')){
+    }else if((longitud == 13 || longitud == 16) && (numTarjeta[0] == '4')){
         return "VISA";
     }else{
         return "INVALID";
