@@ -93,7 +93,7 @@ int miCarrito(Cola *cola, Usuario *usuario){
         printf("\n¿Qué desea hacer?\n1) Eliminar producto\n2) Proceder al pago\n3) Regresar\nIngrese opción: ");
         scanf("%d", &opcion);
         switch(opcion){
-        case 1:
+        case 1: // Eliminar producto
             if(!colaVacia(*cola)){
                 listarCola(*cola);
                 printf("Ingrese el producto a eliminar: ");
@@ -111,7 +111,7 @@ int miCarrito(Cola *cola, Usuario *usuario){
                 return 0;
             }
             break;
-        case 2:
+        case 2: // Proceder al pago
             if(!colaVacia(*cola)){
                 float pagoTotal = comprar(cola); // Calcular total
                 printf("\nEl total es de $%.2f", pagoTotal);
@@ -182,7 +182,7 @@ void *buscarArticulo(Cola *cola){
         fclose(archivo);
 
         if(articulo != NULL){
-            printf("\nArtículo: %s\nCategoría: %s\nMarca: %s\nPrecio: %.2f\nCantidad: %d\n", articulo->nombre, categorias[i], articulo->marca, articulo->precio, articulo->stock);
+            printf("\nProducto: %s\nCategoría: %s\nMarca: %s\nPrecio: %.2f\nCantidad: %d\n", articulo->nombre, categorias[i], articulo->marca, articulo->precio, articulo->stock);
 
             printf("\n¿Desea agregarlo al carrito? \n1) Si \n2) No \nIngrese opción: ");
             scanf("%d", &opcion);
@@ -381,7 +381,7 @@ int cargarInventario(int a, Arreglo *arreglo){
     return 1;
 }
 
-void explorar(Cola *cola){
+void explorar(Cola *cola, Usuario *usuario){
     int opcion, archivo, cantidad, aux;
     int n = 20;
     do{
@@ -393,7 +393,7 @@ void explorar(Cola *cola){
         }
 
         switch(opcion){
-        case 1:
+        case 1: // Categorías
             printf("\n---- CATEGORÍAS ----\n1) Farmacia\n2) Belleza\n3) Herraminetas\n4) Ropa\n5) Juguetes\n6) Instrumentos\nIngrese opción: ");
             scanf("%d", &archivo);
             while(archivo < 1 || archivo > 6){
@@ -425,156 +425,11 @@ void explorar(Cola *cola){
             }
             liberarArreglo(inventario);
             break;
-        case 2:
-            estadisticas();
+        case 2: // Estadísticas
+            estadisticas(usuario);
             break;
         }
     }while(opcion != 3);
-}
-
-void estadisticas(){
-    int opcion, cont, max_stock, min_stock;
-    float max_ventas, min_ventas, max_precio, min_precio;
-    int arrventas[20], arrstock[20];
-    float arrprecios[20];
-    const char *categorias[6] = {"Farmacia", "Belleza", "Herramientas", "Ropa", "Juguetes", "Instrumentos"};
-    const char *archivos[6] = {"./farmacia.csv", "./belleza.csv", "./herramientas.csv", "./ropa.csv", "./juguetes.csv", "./instrumentos.csv"};
-    
-    do{
-        printf("\n---- ESTADÍSTICAS ----\n1) Producto más vendido por categoría\n2) Producto menos vendido por categoría\n3) Ventas promedio por categoría\n4) Número de productos por categoría\n5) Precio mayor por categoría\n6) Precio menor por categoría\n7) Precio promedio por categoría\n8) Producto con mayor stock por categoría\n9) Producto con menor stock por categoría\n10) Stock promedio por categoría\n11) Regresar\nIngrese opción: ");
-        scanf("%d", &opcion);
-
-        if(opcion == 11){
-            break;
-        }
-
-        printf("\n");
-        for(int i = 0; i < 6; i++){
-            FILE *archivo = fopen(archivos[i], "r");
-            if(archivo == NULL){
-                printf("Error al abrir el archivo %s\n", archivos[i]);
-                continue;
-            }
-
-            char linea[MAX_LONGITUD];
-            fgets(linea, sizeof(linea), archivo); // Saltar encabezado
-
-            cont = 0;
-            max_stock = -1;
-            min_stock = -1;
-            max_ventas = -1;
-            min_ventas = -1;
-            max_precio = -1;
-            min_precio = -1;
-
-            char nombre_max_ventas[MAX_TEXTO] = "", nombre_min_ventas[MAX_TEXTO] = "";
-            char nombre_max_precio[MAX_TEXTO] = "", nombre_min_precio[MAX_TEXTO] = "";
-            char nombre_max_stock[MAX_TEXTO] = "", nombre_min_stock[MAX_TEXTO] = "";
-
-            while(fgets(linea, sizeof(linea), archivo)){
-                linea[strcspn(linea, "\n")] = '\0';
-                
-                char *fnombre = strtok(linea, ",");
-                char *fmarca = strtok(NULL, ",");
-                char *fprecio = strtok(NULL, ",");
-                char *fstock = strtok(NULL, ",");
-                char *fventas = strtok(NULL, ",");
-                float precio = atof(fprecio);
-                int stock = atoi(fstock);
-                int ventas = atoi(fventas);
-                
-                arrprecios[cont] = precio;
-                arrstock[cont] = stock;
-                arrventas[cont] = ventas;
-                cont++;
-
-                // Producto más y menos vendido
-                if(max_ventas == -1 || ventas > max_ventas){
-                    max_ventas = ventas;
-                    strcpy(nombre_max_ventas, fnombre);
-                }
-                if(min_ventas == -1 || ventas < min_ventas){
-                    min_ventas = ventas;
-                    strcpy(nombre_min_ventas, fnombre);
-                }
-
-                // Producto con mayor y menor precio
-                if (max_precio == -1 || precio > max_precio){
-                    max_precio = precio;
-                    strcpy(nombre_max_precio, fnombre);
-                }
-                if (min_precio == -1 || precio < min_precio){
-                    min_precio = precio;
-                    strcpy(nombre_min_precio, fnombre);
-                }
-
-                // Producto con mayor y menor stock
-                if (max_stock == -1 || stock > max_stock){
-                    max_stock = stock;
-                    strcpy(nombre_max_stock, fnombre);
-                }
-                if (min_stock == -1 || stock < min_stock){
-                    min_stock = stock;
-                    strcpy(nombre_min_stock, fnombre);
-                }
-            }
-            fclose(archivo);
-
-            // Mostrar resultados según la opción seleccionada
-            printf("-- %s --\n", categorias[i]);
-            switch(opcion){
-                case 1:
-                    printf("%s: %d ventas\n", nombre_max_ventas, (int)max_ventas);
-                    break;
-                case 2:
-                    printf("%s: %d ventas\n", nombre_min_ventas, (int)min_ventas);
-                    break;
-                case 3:
-                    printf("Promedio de ventas: %.1f ventas\n", promedio(arrventas, cont));
-                    break;
-                case 4:
-                    printf("Número de productos: %d\n", cont);
-                    break;
-                case 5:
-                    printf("%s: $%.2f\n", nombre_max_precio, max_precio);
-                    break;
-                case 6:
-                    printf("%s: $%.2f\n", nombre_min_precio, min_precio);
-                    break;
-                case 7:
-                    printf("Promedio de precios: $%.2f\n", promedioFloat(arrprecios, cont));
-                    break;
-                case 8:
-                    printf("%s: %d unidades\n", nombre_max_stock, max_stock);
-                    break;
-                case 9:
-                    printf("%s: %d unidades\n", nombre_min_stock, min_stock);
-                    break;
-                case 10:
-                    printf("Stock promedio: %.1f unidades\n", promedio(arrstock, cont));
-                    break;
-            }
-            printf("\n");
-        }
-    }while(opcion != 11);
-}
-
-float promedio(int datos[], int n){
-    int suma = 0;
-    int *p = datos;
-    for(int i = 0; i < n; i++){
-        suma += *(p + i); // Aritmetica de apuntadores
-    }
-    return (float) suma / n;
-}
-
-float promedioFloat(float datos[], int n){
-    float suma = 0.0;
-    float *p = datos;
-    for(int i = 0; i < n; i++){
-        suma += *(p + i); // Aritmetica de apuntadores
-    }
-    return suma / n;
 }
 
 float comprar(Cola *cola){
@@ -628,6 +483,421 @@ void actualizarSaldo(Usuario *usuario){
         remove("temp.csv");
     }
 }
+
+// FUNCIONES ESTADISTICAS
+void estadisticas(Usuario *usuario){
+    int opcion;
+    do{
+        printf("\n---- ESTADÍSTICAS ----\n1) Producto más vendido por categoría\n2) Producto menos vendido por categoría\n3) Ventas promedio por categoría\n4) ¿Qué productos puedo comprar por categoría?\n5) Precio mayor por categoría\n6) Precio menor por categoría\n7) Precio promedio por categoría\n8) Producto con mayor stock por categoría\n9) Producto con menor stock por categoría\n10) Stock promedio por categoría\n11) Regresar\nIngrese opción: ");
+        scanf("%d", &opcion);
+        printf("\n");
+        
+        switch(opcion){
+            case 1: // Producto más vendido
+                mostrarMasVendido();
+                break;
+            case 2: // Producto menos vendido
+                mostrarMenosVendido();
+                break;
+            case 3: // Ventas promedio
+                mostrarVentasPromedio();
+                break;
+            case 4: // Productos comprables
+                mostrarProductosComprables(usuario);
+                break;
+            case 5: // Precio mayor
+                mostrarPrecioMayor();
+                break;
+            case 6: // Precio menor
+                mostrarPrecioMenor();
+                break;
+            case 7: // Precio promedio
+                mostrarPrecioPromedio();
+                break;
+            case 8: // Producto con mayor stock
+                mostrarMayorStock();
+                break;
+            case 9: // Producto con menor stock
+                mostrarMenorStock();
+                break;
+            case 10: // Stock promedio
+                mostrarStockPromedio();
+                break;
+        }
+    }while(opcion != 11);
+}
+
+void mostrarMasVendido(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        int max_ventas = -1;
+        char nombre_max_ventas[MAX_TEXTO] = "";
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            strtok(NULL, ","); // Saltar marca
+            strtok(NULL, ","); // Saltar precio
+            strtok(NULL, ","); // Saltar stock
+            char *fventas = strtok(NULL, ",");
+            int ventas = atoi(fventas);
+
+            if(max_ventas == -1 || ventas > max_ventas){ // Comparar ventas
+                max_ventas = ventas;
+                strcpy(nombre_max_ventas, fnombre);
+            }
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("%s: %d ventas\n", nombre_max_ventas, max_ventas);
+    }
+}
+
+void mostrarMenosVendido(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        int min_ventas = -1;
+        char nombre_min_ventas[MAX_TEXTO] = "";
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            strtok(NULL, ","); // Saltar marca
+            strtok(NULL, ","); // Saltar precio
+            strtok(NULL, ","); // Saltar stock
+            char *fventas = strtok(NULL, ",");
+            int ventas = atoi(fventas);
+
+            if(min_ventas == -1 || ventas < min_ventas){ // Comparar ventas
+                min_ventas = ventas;
+                strcpy(nombre_min_ventas, fnombre);
+            }
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("%s: %d ventas\n", nombre_min_ventas, min_ventas);
+    }
+}
+
+void mostrarVentasPromedio(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        int arreglo_venta[20];
+        int cont = 0;
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        while (fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            strtok(linea, ","); // Ignorar nombre
+            strtok(NULL, ",");  // Ignorar marca
+            strtok(NULL, ",");  // Ignorar precio
+            strtok(NULL, ",");  // Ignorar stock
+            char *fventas = strtok(NULL, ",");
+            int ventas = atoi(fventas);
+
+            arreglo_venta[cont] = ventas;
+            cont++;
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("Promedio de ventas: %.1f ventas\n", promedio(arreglo_venta, cont));
+    }
+}
+
+void mostrarProductosComprables(Usuario *usuario){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        printf("-- %s --\n", categorias[i]);
+        printf("Productos que puedes comprar con tu saldo actual ($%.2f):\n", usuario->tarjeta->saldo);
+
+        int disponible = 0;
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            char *fmarca = strtok(NULL, ",");
+            char *fprecio = strtok(NULL, ",");
+            //char *fstock = strtok(NULL, ",");
+            //strtok(NULL, ","); // Saltar ventas
+
+            float precio = atof(fprecio);
+            //int stock = atoi(fstock);
+
+            if(precio <= usuario->tarjeta->saldo){
+                printf("%-30s %-20s $%-5.2f\n", fnombre, fmarca, precio);
+                disponible = 1;
+            }
+        }
+
+        if(disponible == 0){
+            printf("No hay productos disponibles en esta categoría.\n");
+        }
+
+        printf("\n");
+        fclose(archivo);
+    }
+}
+
+void mostrarPrecioMayor(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        float max_precio = -1;
+        char nombre_max_precio[MAX_TEXTO] = "";
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            strtok(NULL, ","); // Saltar marca
+            char *fprecio = strtok(NULL, ",");
+
+            float precio = atof(fprecio);
+
+            if(max_precio == -1 || precio > max_precio){ // Comparar precio
+                max_precio = precio;
+                strcpy(nombre_max_precio, fnombre);
+            }
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("%s: $%.2f\n", nombre_max_precio, max_precio);
+    }
+}
+
+void mostrarPrecioMenor(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        float min_precio = -1;
+        char nombre_min_precio[MAX_TEXTO] = "";
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            strtok(NULL, ","); // Saltar marca
+            char *fprecio = strtok(NULL, ",");
+
+            float precio = atof(fprecio);
+
+            if(min_precio == -1 || precio < min_precio){ // Comparar precio
+                min_precio = precio;
+                strcpy(nombre_min_precio, fnombre);
+            }
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("%s: $%.2f\n", nombre_min_precio, min_precio);
+    }
+}
+
+void mostrarPrecioPromedio(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        float arreglo_precio[20];
+        int cont = 0;
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        while (fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            strtok(linea, ","); // Ignorar nombre
+            strtok(NULL, ",");  // Ignorar marca
+            char *fprecio = strtok(NULL, ",");
+            float precio = atof(fprecio);
+
+            arreglo_precio[cont] = precio;
+            cont++;
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("Promedio de precios: $%.2f\n", promedioFloat(arreglo_precio, cont));
+    }
+}
+
+void mostrarMayorStock(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        int max_stock = -1;
+        char nombre_max_stock[MAX_TEXTO] = "";
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            strtok(NULL, ","); // Saltar marca
+            strtok(NULL, ","); // Saltar precio
+            char *fstock = strtok(NULL, ",");
+            strtok(NULL, ",");
+            int stock = atoi(fstock);
+
+            if(max_stock == -1 || stock > max_stock){ // Comparar stock
+                max_stock = stock;
+                strcpy(nombre_max_stock, fnombre);
+            }
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("%s: %d unidades\n", nombre_max_stock, max_stock);
+    }
+}
+
+void mostrarMenorStock(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        int min_stock = -1;
+        char nombre_min_stock[MAX_TEXTO] = "";
+
+        while(fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            char *fnombre = strtok(linea, ",");
+            strtok(NULL, ","); // Saltar marca
+            strtok(NULL, ","); // Saltar precio
+            char *fstock = strtok(NULL, ",");
+            strtok(NULL, ",");
+            int stock = atoi(fstock);
+
+            if(min_stock == -1 || stock < min_stock){ // Comparar stock
+                min_stock = stock;
+                strcpy(nombre_min_stock, fnombre);
+            }
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("%s: %d unidades\n", nombre_min_stock, min_stock);
+    }
+}
+
+void mostrarStockPromedio(){
+    for(int i = 0; i < 6; i++){
+        FILE *archivo = fopen(archivos[i], "r");
+        if(archivo == NULL){
+            printf("Error al abrir el archivo.\n");
+            return;
+        }
+
+        int arreglo_stock[20];
+        int cont = 0;
+        char linea[MAX_LONGITUD];
+        fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
+        while (fgets(linea, sizeof(linea), archivo)){
+            linea[strcspn(linea, "\n")] = '\0';
+
+            strtok(linea, ","); // Ignorar nombre
+            strtok(NULL, ",");  // Ignorar marca
+            strtok(NULL, ",");  // Ignorar precio
+            char *fstock = strtok(NULL, ",");
+            int stock = atoi(fstock);
+
+            arreglo_stock[cont] = stock;
+            cont++;
+        }
+
+        fclose(archivo);
+        printf("-- %s --\n", categorias[i]);
+        printf("Stock promedio: %.1f unidades\n", promedio(arreglo_stock, cont));
+    }
+}
+
+float promedio(int datos[], int n){
+    int suma = 0;
+    int *p = datos;
+    for(int i = 0; i < n; i++){
+        suma += *(p + i); // Aritmetica de apuntadores
+    }
+    return (float) suma / n;
+}
+
+float promedioFloat(float datos[], int n){
+    float suma = 0.0;
+    float *p = datos;
+    for(int i = 0; i < n; i++){
+        suma += *(p + i); // Aritmetica de apuntadores
+    }
+    return suma / n;
+}
+
 
 // FUNCIONES DE PILA
 Pila *crearPila(){
@@ -773,14 +1043,14 @@ Usuario *miCuenta(Usuario *usuario){
         printf("\n---- BIENVENIDO A SELLTRACK ----\n1) Iniciar sesión\n2) Registrarse\n3) Salir\nIngrese opción: ");
         scanf("%d", &opcion);
         switch(opcion){
-        case 1:
+        case 1: // Iniciar sesión
             usuario = iniciarSesion();
             if(usuario == NULL){
                 break;
             }
             return usuario;
             break;
-        case 2:
+        case 2: // Registrarse
             registrarse();
             break;
         }

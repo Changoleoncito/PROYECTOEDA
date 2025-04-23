@@ -15,7 +15,7 @@ int main(void){
                 imprimirUsuario(usuario);
                 break;
             case 2: //Explorar
-                explorar(cola);
+                explorar(cola, usuario);
                 break;
             case 3: //Buscar productos
                 buscarArticulo(cola);

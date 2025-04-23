@@ -71,12 +71,24 @@ void pushCola(Cola *cola, Articulo *articulo);
 char *popCola(Cola *cola, int *n);
 void listarCola(Cola cola);
 int cargarInventario(int a, Arreglo *arreglo);
-void explorar(Cola *cola);
-void estadisticas();
-float promedio(int datos[], int n);
-float promedioFloat(float datos[], int n);
+void explorar(Cola *cola, Usuario *usuario);
 float comprar(Cola *cola);
 void actualizarSaldo(Usuario *usuario);
+
+// FUNCIONES ESTADISTICAS
+void estadisticas(Usuario *usuario);
+void mostrarMasVendido();
+void mostrarMenosVendido();
+void mostrarVentasPromedio();
+void mostrarProductosComprables(Usuario *usuario);
+void mostrarPrecioMayor();
+void mostrarPrecioMenor();
+void mostrarPrecioPromedio();
+void mostrarMayorStock();
+void mostrarMenorStock();
+void mostrarStockPromedio();
+float promedio(int datos[], int n);
+float promedioFloat(float datos[], int n);
 
 // FUNCIONES DE PILA
 Pila *crearPila();
