@@ -4,10 +4,11 @@
 #define MAX_ALCALDIAS 4
 extern const char *alcaldias[MAX_ALCALDIAS];
 extern const char *calles[MAX_CALLES];
+extern const char *archivos[6];
+extern const char *categorias[6];
 
 //ESTRUCTURAS
 typedef struct{
-    int tipo;
     char *nombre;
     char *marca;
     float precio;
@@ -16,13 +17,20 @@ typedef struct{
     int ventas;
 }Articulo;
 
+typedef struct{
+    Articulo *articulo;
+    int capacidad;
+    int tam;
+}Arreglo;
+
 typedef struct Nodo{
     Articulo *art;
     struct Nodo *sig;
 }Nodo;
 
 typedef struct{
-    Nodo *h, *t;
+    Nodo *h;
+    Nodo *t;
 }Cola;
 
 typedef struct{
@@ -46,35 +54,39 @@ typedef struct{
     int ID;
 }Usuario;
 
-//FUNCIONES DE CREACION
-Articulo *crearArticulo();
+// FUNCIONES DE ARREGLO
+Arreglo *crearArreglo(int capacidad);
+int pushArreglo(Arreglo *arreglo, Articulo art);
+void listarArreglo(Arreglo *arreglo);
 
-//FUNCIONES DE COLA
+// FUNCIONES DE COLA
 Cola *crearCola();
+Articulo *crearArticulo();
 int miCarrito(Cola *cola, Usuario *usuario);
-Articulo *buscarArticulo(Cola *cola);
+void agregarCarrito(Cola *cola, Articulo articulo, int cantidad);
+void *buscarArticulo(Cola *cola);
 Articulo *buscarArchivo(FILE *archivo, const char *articulo);
 int colaVacia(Cola cola);
-void insertar(Cola *cola, Articulo *articulo);
-void listar(Cola cola);
-void listarArticulos(int tipo, Articulo *dispArticulos);
-void capturarArticulo(Articulo *articulo);
+void pushCola(Cola *cola, Articulo *articulo);
+char *popCola(Cola *cola, int *n);
+void listarCola(Cola cola);
+int cargarInventario(int a, Arreglo *arreglo);
+void explorar(Cola *cola);
 void estadisticas();
 float promedio(int datos[], int n);
 float promedioFloat(float datos[], int n);
-char *borrarArticulo(Cola *cola, int *n);
 float comprar(Cola *cola);
 void actualizarSaldo(Usuario *usuario);
 
-//FUNCIONES DE PILA
+// FUNCIONES DE PILA
 Pila *crearPila();
 void listarPila(Pila pila);
 int pilaVacia(Pila pila);
-void push(Pila *pila, const char *calle);
-void pop(Pila *pila);
+void pushPila(Pila *pila, const char *calle);
+void popPila(Pila *pila);
 void viajeEmpleado();
 
-//FUNCIONES DE USUARIO
+// FUNCIONES DE USUARIO
 Usuario *crearUsuario();
 Tarjeta *crearTarjeta();
 Usuario *miCuenta(Usuario *usuario);
@@ -87,8 +99,9 @@ void desencriptarBasico(char *password);
 int check(const char *card_number);
 const char *card_type(const char *card_number);
 
-//FUNCIONES DE LIBERACION
+// FUNCIONES DE LIBERACION
 void liberarArticulo(Articulo *articulo);
+void liberarArreglo(Arreglo *arreglo);
 void liberarNodo(Nodo *nodo);
 void liberarCola(Cola *cola);
 void liberarUsuario(Usuario *usuario);

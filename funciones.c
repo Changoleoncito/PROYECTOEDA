@@ -6,16 +6,68 @@
 #include <unistd.h>
 #include "funciones.h"
 
-const char *alcaldias[4] = {"Benito Juárez", "Coyoacan", "Cuauhtémoc", "Miguel Hidalgo"};
-const char *calles[6] = {"Calle A", "Calle B", "Calle C", "Calle D", "Calle E", "Calle F"};
+const char *alcaldias[MAX_ALCALDIAS] = {"Benito Juárez", "Coyoacan", "Cuauhtémoc", "Miguel Hidalgo"};
+const char *calles[MAX_CALLES] = {"Calle A", "Calle B", "Calle C", "Calle D", "Calle E", "Calle F"};
+const char *archivos[6] = {"./farmacia.csv", "./belleza.csv", "./herramientas.csv", "./ropa.csv", "./juguetes.csv", "./instrumentos.csv"};
+const char *categorias[6] = {"Farmacia", "Belleza", "Herramientas", "Ropa", "Juguetes", "Instrumentos"};
 
-// FUNCIONES DE CREACION
+// FUNCIONDES DE ARREGLO
+Arreglo *crearArreglo(int capacidad){
+    Arreglo *arreglo = (Arreglo *)malloc(sizeof(Arreglo));
+    if(arreglo == NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(1);
+    }
+
+    arreglo->articulo = (Articulo *)calloc(capacidad, sizeof(Articulo));
+    if(arreglo->articulo == NULL){
+        free(arreglo);
+        printf("Error: Espacio insuficiente...");
+        exit(1);
+    }
+
+    arreglo->capacidad = capacidad;
+    arreglo->tam = 0;
+    return arreglo;
+}
+
+int pushArreglo(Arreglo *arreglo, Articulo art){
+    arreglo->articulo[arreglo->tam++] = art;
+    return arreglo->tam - 1; // Retorna índice donde se insertó
+}
+
+void listarArreglo(Arreglo *arreglo){
+    if(arreglo->tam == 0){
+        printf("\nNo hay artículos en el arreglo.\n");
+        return;
+    }
+
+    Articulo *art = arreglo->articulo;
+    for(int i = 0; i < arreglo->tam; i++){
+        printf("%3d) %-30s %-20s $%-5.2f\n", i + 1, (art + i)->nombre, (art + i)->marca, (art + i)->precio); // Aritmetica de apuntadores
+    }
+}
+
+// FUNCIONES DE COLA
+Cola *crearCola(){
+    Cola *cola = (Cola *)malloc(sizeof(Cola));
+    if(cola == NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(1);
+    }
+
+    cola->h = NULL;
+    cola->t = NULL;
+    return cola;
+}
+
 Articulo *crearArticulo(){
     Articulo *articulo = (Articulo *)calloc(1, sizeof(Articulo));
     if(articulo == NULL){
         printf("Error: Espacio insuficiente...");
         exit(1);
     }
+
     articulo->marca = (char *)calloc(MAX_TEXTO, sizeof(char));
     articulo->nombre = (char *)calloc(MAX_TEXTO, sizeof(char));
     if(articulo->marca == NULL || articulo->nombre == NULL){
@@ -25,60 +77,59 @@ Articulo *crearArticulo(){
         free(articulo);
         exit(1);
     }
-    return articulo;
-}
 
-// FUNCIONES DE COLA
-Cola *crearCola(){
-    Cola *nuevaCola;
-    nuevaCola = (Cola *)malloc(sizeof(Cola));
-    if(nuevaCola == NULL){
-        printf("Error: Espacio insuficiente...");
-        exit(1);
-    }
-    nuevaCola->h = NULL;
-    nuevaCola->t = NULL;
-    return nuevaCola;
+    articulo->stock = 0;
+    articulo->precio = 0.0;
+    articulo->ventas = 0;
+    articulo->visible = 0;
+    return articulo;
 }
 
 int miCarrito(Cola *cola, Usuario *usuario){
     int opcion;
+    int aux;
     do{
-        listar(*cola);
+        listarCola(*cola);
         printf("\n¿Qué desea hacer?\n1) Eliminar producto\n2) Proceder al pago\n3) Regresar\nIngrese opción: ");
         scanf("%d", &opcion);
         switch(opcion){
         case 1:
             if(!colaVacia(*cola)){
-                listar(*cola);
-                printf("Que articulo desea eliminar?: ");
-                scanf("%d", &opcion);
-                char *nameaux = borrarArticulo(cola, &opcion);
-                printf("%s elimidado del carrito.", nameaux);
+                listarCola(*cola);
+                printf("Ingrese el producto a eliminar: ");
+                scanf("%d", &aux);
+                
+                char *nameaux = popCola(cola, &aux);
+                if(nameaux != NULL){
+                    printf("\n%s eliminado del carrito.\n", nameaux);
+                    free(nameaux);
+                }else{
+                    printf("\nNo se encontró el producto.\n");
+                }
             }else{
-                printf("\nNo hay articulos en el carrito.\n");
+                printf("\nNo hay producto en el carrito.\n");
+                return 0;
             }
             break;
         case 2:
             if(!colaVacia(*cola)){
-                float pagoTotal = comprar(cola);
+                float pagoTotal = comprar(cola); // Calcular total
                 printf("\nEl total es de $%.2f", pagoTotal);
                 if (usuario->tarjeta->saldo < pagoTotal){
                     printf("\nSaldo Insuficiente.\n");
                 }else{
                     printf("\nConfirme su pago (Presione 0 para cancelar y 1 para confirmar): ");
-                    scanf("%d", &opcion);
-                    if(opcion){
-                        usuario->tarjeta->saldo -= pagoTotal;
+                    scanf("%d", &aux);
+                    if(aux == 1){
+                        usuario->tarjeta->saldo -= pagoTotal; // Actualizar saldo
                         actualizarSaldo(usuario);
-                        sleep(2);
                         printf("\nPago realizado. Saldo actual: $%.2f\n", usuario->tarjeta->saldo);
-                        while(!colaVacia(*cola)){
+                        printf("\n¡Gracias por su compra!\n");
+                        viajeEmpleado(); // Simulación de envío
+                        while(!colaVacia(*cola)){ // Borrar los productos del carrito
                             int n = 1;
-                            char *nombre = borrarArticulo(cola, &n);
-                            n++;
+                            char *nombre = popCola(cola, &n);
                         }
-                        viajeEmpleado();
                     }
                 }
             }
@@ -88,9 +139,30 @@ int miCarrito(Cola *cola, Usuario *usuario){
     return 0;
 }
 
-Articulo *buscarArticulo(Cola *cola){ 
-    const char *categorias[6] = {"Farmacia", "Belleza", "Herramientas", "Ropa", "Juguetes", "Instrumentos"};
-    const char *archivos[6] = {"./farmacia.csv", "./belleza.csv", "./herramientas.csv", "./ropa.csv", "./juguetes.csv", "./instrumentos.csv"};
+void agregarCarrito(Cola *cola, Articulo articulo, int cantidad){
+    Articulo *articuloCarrito = crearArticulo();
+    if(articuloCarrito == NULL){
+        printf("Error al crear el artículo del carrito.\n");
+        return;
+    }
+
+    articuloCarrito->nombre = strdup(articulo.nombre);
+    articuloCarrito->marca = strdup(articulo.marca);
+    if(articuloCarrito->nombre == NULL || articuloCarrito->marca == NULL){
+        printf("Error al asignar memoria para el nombre o marca del artículo.\n");
+        liberarArticulo(articuloCarrito);
+        return;
+    }
+
+    articuloCarrito->precio = articulo.precio;
+    articuloCarrito->stock = cantidad;
+    articuloCarrito->visible = 1;
+
+    pushCola(cola, articuloCarrito); // Se agrega el producto al carrito
+    printf("\n%s agregado al carrito.\n", articuloCarrito->nombre);
+}
+
+void *buscarArticulo(Cola *cola){ 
     char articulo_nombre[MAX_TEXTO];
     int opcion, cantidad;
 
@@ -116,7 +188,7 @@ Articulo *buscarArticulo(Cola *cola){
             scanf("%d", &opcion);
 
             if(opcion == 1){
-                printf("Ingrese la cantidad de articulos que desea agregar al carrito: ");
+                printf("Ingrese la cantidad de producto que desea agregar al carrito: ");
                 scanf("%d", &cantidad);
 
                 while(cantidad > articulo->stock){
@@ -124,25 +196,16 @@ Articulo *buscarArticulo(Cola *cola){
                     scanf("%d", &cantidad);
                 }
 
-                Articulo *articuloCarrito = crearArticulo();
-                strcpy(articuloCarrito->nombre, articulo->nombre);
-                strcpy(articuloCarrito->marca, articulo->marca);
-                articuloCarrito->precio = articulo->precio;
-                articuloCarrito->stock = cantidad;
-                articuloCarrito->visible = 1;
-
-                insertar(cola, articuloCarrito);
-                printf("\n%s agregado al carrito.\n", articuloCarrito->nombre);
-
+                agregarCarrito(cola, *articulo, cantidad);
                 liberarArticulo(articulo);
-                return articuloCarrito;
+                return NULL;
             }else{
                 liberarArticulo(articulo);
                 return NULL;
             }
         }
     }
-    printf("\nEl artículo %s no se encuentra en nuestro inventario. Lo sentimos.\n", articulo_nombre);
+    printf("\nEl producto %s no se encuentra en nuestro inventario. Lo sentimos.\n", articulo_nombre);
     return NULL;
 }
 
@@ -155,7 +218,7 @@ Articulo *buscarArchivo(FILE *archivo, const char *articulo){
         return NULL;
     }
 
-    fgets(linea, sizeof(linea), archivo);
+    fgets(linea, sizeof(linea), archivo); // Saltar encabezado
 
     while(fgets(linea, sizeof(linea), archivo)){
         linea[strcspn(linea, "\n")] = '\0';
@@ -163,26 +226,28 @@ Articulo *buscarArchivo(FILE *archivo, const char *articulo){
         char *nombre = strtok(linea, ",");
         if(nombre && strcmp(nombre, articulo) == 0){
             Art = crearArticulo();
-            if(Art){
-                strncpy(Art->nombre, nombre, MAX_TEXTO - 1);
-                Art->nombre[MAX_TEXTO - 1] = '\0';
+            if(Art != NULL){
+                strcpy(Art->nombre, nombre);
+                Art->nombre[MAX_TEXTO] = '\0';
 
                 char *marca = strtok(NULL, ",");
-                if(marca){
-                    strncpy(Art->marca, marca, MAX_TEXTO);
-                    Art->marca[MAX_TEXTO - 1] = '\0';
+                if(marca != NULL){
+                    strcpy(Art->marca, marca);
+                    Art->marca[MAX_TEXTO] = '\0';
                 }
 
                 char *precio = strtok(NULL, ",");
-                if(precio){
+                if(precio != NULL){
                     Art->precio = atof(precio);
                 }
+
                 char *stock = strtok(NULL, ",");
-                if(stock){
+                if(stock != NULL){
                     Art->stock = atoi(stock);
                 }
+
                 char *ventas = strtok(NULL, ",");
-                if(ventas){
+                if(ventas != NULL){
                     Art->ventas = atoi(ventas);
                 }
                 break;
@@ -196,7 +261,7 @@ int colaVacia(Cola cola){
     return cola.h == NULL;
 }
 
-void insertar(Cola *cola, Articulo *articulo){
+void pushCola(Cola *cola, Articulo *articulo){
     Nodo *nuevoNodo = (Nodo *)malloc(sizeof(Nodo));
     if(nuevoNodo == NULL){
         printf("Error: memoria insuficiente...");
@@ -212,16 +277,56 @@ void insertar(Cola *cola, Articulo *articulo){
     }
 }
 
-void listar(Cola cola){
-    Nodo *q;
+char *popCola(Cola *cola, int *n){
+    if (colaVacia(*cola)){
+        printf("\nNo hay productos en el carrito.\n");
+        return NULL;
+    }
+    
+    Nodo *q = cola->h;
+    Nodo *anterior = NULL;
+    int i = 1;
+    char *nombre = NULL;
+
+    // Buscar el nodo a eliminar
+    for(q = cola->h; q != NULL && i < *n; q = q->sig){
+        anterior = q;
+        i++;
+    }
+
+    if(q == NULL){
+        return NULL; // No se encontró el nodo
+    }
+
+    nombre = strdup(q->art->nombre); // Extrae el nombre
+
+    // Eliminar el nodo
+    if(anterior == NULL){
+        cola->h = q->sig; // Es el primer nodo
+        if (cola->h == NULL){
+            cola->t = NULL;
+        }
+    }else{
+        anterior->sig = q->sig;
+        if(q->sig == NULL){
+            cola->t = anterior;
+        }
+    }
+    liberarNodo(q);
+    return nombre;
+}
+
+void listarCola(Cola cola){
     if(colaVacia(cola)){
         printf("\nNo hay productos en el carrito\n");
+        return;
     }else{
         printf("\n----- MI CARRITO -----\n");
         int i = 1;
+        Nodo *q = NULL;
         for(q = cola.h; q != NULL; q = q->sig){
             if(q->art->visible){
-                printf("\n%3d) %s\tMarca: %s\tPrecio: %.2f \tCantidad: %i\n", i, q->art->nombre, q->art->marca, q->art->precio, q->art->stock);
+                printf("\n%3d) %s\tMarca: %s\tPrecio: $%.2f \tCantidad: %i\n", i, q->art->nombre, q->art->marca, q->art->precio, q->art->stock);
                 i++;
             }
         }
@@ -229,75 +334,96 @@ void listar(Cola cola){
     printf("\n");
 }
 
-void listarArticulos(int archiv, Articulo *dispArticulos){
-    const char *archivos[6] = {"./farmacia.csv", "./belleza.csv", "./herramientas.csv", "./ropa.csv", "./juguetes.csv", "./instrumentos.csv"};
-    archiv--;
-    FILE *archivo = fopen(archivos[archiv], "r");
+int cargarInventario(int a, Arreglo *arreglo){
+    FILE *archivo = fopen(archivos[a], "r");
     if(archivo == NULL){
         printf("Error al abrir el archivo.\n");
-        exit(1);
+        return 0;
     }
+
     char linea[MAX_LONGITUD];
-    int i = 0;
+    fgets(linea, sizeof(linea), archivo); // Saltar encabezado
+
     while(fgets(linea, sizeof(linea), archivo)){
         linea[strcspn(linea, "\n")] = '\0'; // eliminar los saltos de linea;
-        if(i == 0){
-            i++;
-            continue; // No tomar en cuenta el primer renglón;
-        }
-        if(i == 1){
-            printf("\n");
-        }
+
         char *fnombre = strtok(linea, ",");
         char *fmarca = strtok(NULL, ",");
-        char *precio = strtok(NULL, ",");
-        char *stock = strtok(NULL, ",");
-        char *ventas = strtok(NULL, ",");
-        float fprecio = atof(precio);
-        int fstock = atoi(stock);
-        int fventas = atoi(ventas);
-        dispArticulos[(i - 1)].nombre = strdup(fnombre);
-        dispArticulos[(i - 1)].marca = strdup(fmarca);
-        dispArticulos[(i - 1)].precio = fprecio;
-        dispArticulos[(i - 1)].stock = fstock;
-        dispArticulos[(i - 1)].ventas = fventas;
-        printf("%3d) %-30s %-20s %-5.2f\n", i, fnombre, fmarca, fprecio);
-        i++;
+        char *fprecio = strtok(NULL, ",");
+        char *fstock = strtok(NULL, ",");
+        char *fventas = strtok(NULL, ",");
+        if(fnombre == NULL || fmarca == NULL || fprecio == NULL || fstock == NULL || fventas == NULL){
+            printf("Error al leer el archivo.\n");
+            return 0;
+        }
+
+        float precio = atof(fprecio);
+        int stock = atoi(fstock);
+        int ventas = atoi(fventas);
+
+        Articulo *art = crearArticulo();
+
+        art->nombre = strdup(fnombre);
+        art->marca = strdup(fmarca);
+        if(art->nombre == NULL || art->marca == NULL){
+            printf("Error al asignar memoria para el nombre o marca del artículo.\n");
+            liberarArticulo(art);
+            continue;
+        }
+        art->precio = precio;
+        art->stock = stock;
+        art->ventas = ventas;
+        art->visible = 1;
+        
+        pushArreglo(arreglo, *art);
     }
     fclose(archivo);
+    return 1;
 }
 
-void capturarArticulo(Articulo *articulo){
-    int opcion, archiv, cantidad, aux;
-    // Uso del arreglo para acceder a un producto
-    Articulo *dispArticulos;
+void explorar(Cola *cola){
+    int opcion, archivo, cantidad, aux;
     int n = 20;
-    dispArticulos = (Articulo *)calloc(n, sizeof(Articulo));
     do{
         printf("\n---- EXPLORAR ----\n1) Categorías\n2) Estadísticas\n3) Regresar\nIngrese opción: ");
         scanf("%d", &opcion);
+        while(opcion < 1 || opcion > 3){
+            printf("Opción no válida. Ingrese nuevamente: ");
+            scanf("%d", &opcion);
+        }
+
         switch(opcion){
         case 1:
             printf("\n---- CATEGORÍAS ----\n1) Farmacia\n2) Belleza\n3) Herraminetas\n4) Ropa\n5) Juguetes\n6) Instrumentos\nIngrese opción: ");
-            scanf("%d", &archiv);
-            printf("\nSe encientran disponibles los siguientes productos:");
-            listarArticulos(archiv, dispArticulos);
-            printf("Ingrese el artículo a seleccionar (Presione 0 para cancelar): ");
+            scanf("%d", &archivo);
+            while(archivo < 1 || archivo > 6){
+                printf("Opción no válida. Ingrese nuevamente: ");
+                scanf("%d", &archivo);
+            }
+            Arreglo *inventario = crearArreglo(n);
+            cargarInventario(archivo - 1, inventario);
+
+            printf("\nSe encuentran disponibles los siguientes productos:\n");
+            listarArreglo(inventario);
+
+            printf("Ingrese el producto a seleccionar (Presione 0 para cancelar): ");
             scanf("%d", &aux);
+            while(aux < 0 || aux > inventario->tam){
+                printf("Opción no válida. Ingrese nuevamente: ");
+                scanf("%d", &aux);
+            }
+
             if(aux != 0){
-                articulo->nombre = dispArticulos[aux - 1].nombre;
-                articulo->marca = dispArticulos[aux - 1].marca;
-                articulo->precio = dispArticulos[aux - 1].precio;
-                printf("Ingrese la cantidad de articulos que desea agregar al carrito: ");
+                printf("Ingrese la cantidad de productos que desea agregar al carrito: ");
                 scanf("%d", &cantidad);
-                while(cantidad > dispArticulos->stock){
+
+                while(cantidad > inventario->articulo[aux - 1].stock || cantidad < 1){
                     printf("No hay suficiente stock. Seleccione otra cantidad: ");
                     scanf("%d", &cantidad);
                 }
-                articulo->stock = cantidad;
-                articulo->visible = 1;
-                printf("%s agregado al carrito.\n", articulo->nombre);
+                agregarCarrito(cola, inventario->articulo[aux - 1], cantidad);
             }
+            liberarArreglo(inventario);
             break;
         case 2:
             estadisticas();
@@ -307,7 +433,8 @@ void capturarArticulo(Articulo *articulo){
 }
 
 void estadisticas(){
-    int opcion;
+    int opcion, cont, max_stock, min_stock;
+    float max_ventas, min_ventas, max_precio, min_precio;
     int arrventas[20], arrstock[20];
     float arrprecios[20];
     const char *categorias[6] = {"Farmacia", "Belleza", "Herramientas", "Ropa", "Juguetes", "Instrumentos"};
@@ -332,10 +459,13 @@ void estadisticas(){
             char linea[MAX_LONGITUD];
             fgets(linea, sizeof(linea), archivo); // Saltar encabezado
 
-            int cont = 0;
-            float max_ventas = -1, min_ventas = -1;
-            float max_precio = -1, min_precio = -1;
-            int max_stock = -1, min_stock = -1;
+            cont = 0;
+            max_stock = -1;
+            min_stock = -1;
+            max_ventas = -1;
+            min_ventas = -1;
+            max_precio = -1;
+            min_precio = -1;
 
             char nombre_max_ventas[MAX_TEXTO] = "", nombre_min_ventas[MAX_TEXTO] = "";
             char nombre_max_precio[MAX_TEXTO] = "", nombre_min_precio[MAX_TEXTO] = "";
@@ -358,34 +488,34 @@ void estadisticas(){
                 arrventas[cont] = ventas;
                 cont++;
 
-                // Producto más/menos vendido
+                // Producto más y menos vendido
                 if(max_ventas == -1 || ventas > max_ventas){
                     max_ventas = ventas;
-                    strncpy(nombre_max_ventas, fnombre, MAX_TEXTO);
+                    strcpy(nombre_max_ventas, fnombre);
                 }
                 if(min_ventas == -1 || ventas < min_ventas){
                     min_ventas = ventas;
-                    strncpy(nombre_min_ventas, fnombre, MAX_TEXTO);
+                    strcpy(nombre_min_ventas, fnombre);
                 }
 
-                // Producto con mayor/menor precio
-                if (max_precio == -1 || precio > max_precio) {
+                // Producto con mayor y menor precio
+                if (max_precio == -1 || precio > max_precio){
                     max_precio = precio;
-                    strncpy(nombre_max_precio, fnombre, MAX_TEXTO);
+                    strcpy(nombre_max_precio, fnombre);
                 }
-                if (min_precio == -1 || precio < min_precio) {
+                if (min_precio == -1 || precio < min_precio){
                     min_precio = precio;
-                    strncpy(nombre_min_precio, fnombre, MAX_TEXTO);
+                    strcpy(nombre_min_precio, fnombre);
                 }
 
-                // Producto con mayor/menor stock
-                if (max_stock == -1 || stock > max_stock) {
+                // Producto con mayor y menor stock
+                if (max_stock == -1 || stock > max_stock){
                     max_stock = stock;
-                    strncpy(nombre_max_stock, fnombre, MAX_TEXTO);
+                    strcpy(nombre_max_stock, fnombre);
                 }
-                if (min_stock == -1 || stock < min_stock) {
+                if (min_stock == -1 || stock < min_stock){
                     min_stock = stock;
-                    strncpy(nombre_min_stock, fnombre, MAX_TEXTO);
+                    strcpy(nombre_min_stock, fnombre);
                 }
             }
             fclose(archivo);
@@ -431,46 +561,28 @@ void estadisticas(){
 
 float promedio(int datos[], int n){
     int suma = 0;
+    int *p = datos;
     for(int i = 0; i < n; i++){
-        suma += datos[i];
+        suma += *(p + i); // Aritmetica de apuntadores
     }
     return (float) suma / n;
 }
 
 float promedioFloat(float datos[], int n){
     float suma = 0.0;
+    float *p = datos;
     for(int i = 0; i < n; i++){
-        suma += datos[i];
+        suma += *(p + i); // Aritmetica de apuntadores
     }
     return suma / n;
 }
 
-char *borrarArticulo(Cola *cola, int *n){
-    char *dato;
-    Nodo *q = cola->h;
-    if(!colaVacia(*cola)){
-        if (cola->h == cola->t){
-            cola->h = cola->t = NULL;
-        }else{
-            for(int i = 0; i < (*n) - 1; i++){
-                q = q->sig;
-            }
-            q->art->visible = 0;
-        }
-        dato = q->art->nombre; // Extraer el nombre del articulo
-    }else{
-        printf("\nNo hay productos en el carrito.\n");
-    }
-    return dato;
-}
-
 float comprar(Cola *cola){
     float total = 0;
-    Nodo *q;
-    q = cola->h;
+    Nodo *q = cola->h;
     for(q = cola->h; q != NULL; q = q->sig){
         if (q->art->visible){
-            total += ((q->art->precio) * (q->art->stock));
+            total += (q->art->precio * q->art->stock); // Aritmetica de apuntadores
         }
     }
     return total;
@@ -497,21 +609,12 @@ void actualizarSaldo(Usuario *usuario){
         strcpy(lineaCopia, linea);
         lineaCopia[strcspn(lineaCopia, "\n")] = '\0';
 
-        char *aux = strtok(lineaCopia, ",");
-        if(aux && strcmp(aux, usuario->correo) == 0){
+        char *correo = strtok(lineaCopia, ",");
+        if(correo && strcmp(correo, usuario->correo) == 0){
             buscar = 1;
-            char *correo = aux;
-            char *password = strtok(NULL, ",");
-            char *nombre = strtok(NULL, ",");
-            char *telefono = strtok(NULL, ",");
-            char *tarjeta = strtok(NULL, ",");
-            char *tipoTarjeta = strtok(NULL, ",");
-            char *saldo = strtok(NULL, ",");
-            char *id = strtok(NULL, ",");
-
-            fprintf(temp, "%s,%s,%s,%s,%s,%s,%.2s,%s\n", correo, password, nombre, telefono, tarjeta, tipoTarjeta, saldo, id);
+            fprintf(temp, "%s,%s,%s,%ld,%s,%s,%.2f,%d\n", usuario->correo, usuario->password, usuario->nombre, usuario->telefono, usuario->tarjeta->tarjeta, usuario->tarjeta->tipoTarjeta, usuario->tarjeta->saldo, usuario->ID);
         }else{
-            fprintf(temp, "%s", linea);
+            fputs(linea, temp);
         }
     }
     fclose(archivo);
@@ -528,10 +631,19 @@ void actualizarSaldo(Usuario *usuario){
 
 // FUNCIONES DE PILA
 Pila *crearPila(){
-    Pila *nuevaPila = (Pila *)calloc(1, sizeof(Pila));
-    nuevaPila->t = -1;
-    nuevaPila->max = 4;
-    return nuevaPila;
+    Pila *pila = (Pila *)calloc(1, sizeof(Pila));
+    if(pila == NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(1);
+    }
+
+    for(int i = 0; i < 4; i++){ // Inicializar la pila
+        pila->elementos[i][0] = '\0';
+    }
+
+    pila->t = -1;
+    pila->max = 4;
+    return pila;
 }
 
 void listarPila(Pila pila){
@@ -540,9 +652,8 @@ void listarPila(Pila pila){
         return;
     }
 
-    int i;
-    for(i = pila.t; i >= 0; i--){
-        printf("- %s\n ", pila.elementos[i]);
+    for(int i = pila.t; i >= 0; i--){
+        printf("%s\n ", pila.elementos[i]);
     }
 }
 
@@ -550,21 +661,22 @@ int pilaVacia(Pila pila){
     return pila.t == -1;
 }
 
-void push(Pila *pila, const char *calle){
+void pushPila(Pila *pila, const char *calle){
     if(pila->t == pila->max - 1){
         printf("Recorrido lleno.\n");
         return;
     }
     pila->t++;
-    strncpy(pila->elementos[pila->t], calle, MAX_TEXTO - 1);
+    strcpy(pila->elementos[pila->t], calle);
     pila->elementos[pila->t][MAX_TEXTO - 1] = '\0';
 }
 
-void pop(Pila *pila){
+void popPila(Pila *pila){
     if(pilaVacia(*pila)){
         printf("Recorrido vacio.\n");
         return;
     }
+    pila->elementos[pila->t][0] = '\0'; // Limpiar datos
     pila->t--;
 }
 
@@ -574,7 +686,7 @@ void viajeEmpleado(){
     printf("\n¿A qué alcaldía se enviará el pedido?\n1) %s\n2) %s\n3) %s\n4) %s\nIngrese opción: ", alcaldias[0], alcaldias[1], alcaldias[2], alcaldias[3]);
     scanf("%d", &opcion);
 
-    while (opcion < 1 || opcion > MAX_ALCALDIAS){
+    while(opcion < 1 || opcion > MAX_ALCALDIAS){
         printf("Opción no válida. Ingrese nuevamente: ");
         scanf("%d", &opcion);
     }
@@ -586,12 +698,10 @@ void viajeEmpleado(){
     int callesAsignadas = 0;
 
     srand(time(NULL));
-    while (callesAsignadas < 4)
-    {
+    while(callesAsignadas < 4){
         int i = rand() % MAX_CALLES;
-        if (!callesUsadas[i])
-        {
-            push(recorrido, calles[i]);
+        if(!callesUsadas[i]){
+            pushPila(recorrido, calles[i]);
             callesUsadas[i] = 1;
             callesAsignadas++;
 
@@ -605,12 +715,10 @@ void viajeEmpleado(){
     sleep(2);
     printf("\nRecorrido completo del envío:\n");
     listarPila(*recorrido);
-
-    sleep(2);
     printf("El repartidor está regresando...\n");
-    while (!pilaVacia(*recorrido))
-    {
-        pop(recorrido);
+
+    while(!pilaVacia(*recorrido)){
+        popPila(recorrido);
     }
     liberarPila(recorrido);
 }
@@ -618,36 +726,43 @@ void viajeEmpleado(){
 // FUNCIONES DE USUARIO
 Usuario *crearUsuario(){
     Usuario *usuario = (Usuario *)calloc(1, sizeof(Usuario));
-    if(!usuario){
-        return NULL;
+    if(usuario == NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(1);
     }
+
     usuario->nombre = (char *)calloc(MAX_TEXTO, sizeof(char));
     usuario->correo = (char *)calloc(MAX_TEXTO, sizeof(char));
     usuario->password = (char *)calloc(MAX_TEXTO, sizeof(char));
-    if(!usuario->nombre || !usuario->correo || !usuario->password){
+    if(usuario->nombre == NULL || usuario->correo == NULL || usuario->password == NULL){
         liberarUsuario(usuario);
         return NULL;
     }
     
     usuario->tarjeta = crearTarjeta();
-    if(!usuario->tarjeta){
+    if(usuario->tarjeta == NULL){
         liberarUsuario(usuario);
-        return NULL;
+        printf("Error: Espacio insuficiente...");
+        exit(1);
     }
     return usuario;
 }
 
 Tarjeta *crearTarjeta(){
     Tarjeta *tarjeta = (Tarjeta *)calloc(1, sizeof(Tarjeta));
-    if(!tarjeta){
-        return NULL;
+    if(tarjeta == NULL){
+        printf("Error: Espacio insuficiente...");
+        exit(1);
     }
+
     tarjeta->tarjeta = (char *)calloc(17, sizeof(char));
     tarjeta->tipoTarjeta = (char *)calloc(MAX_TEXTO, sizeof(char));
-    if(!tarjeta->tarjeta || !tarjeta->tipoTarjeta){
+    if(tarjeta->tarjeta == NULL || tarjeta->tipoTarjeta == NULL){
         liberarTarjeta(tarjeta);
-        return NULL;
+        printf("Error: Espacio insuficiente...");
+        exit(1);
     }
+    
     tarjeta->saldo = 0;
     return tarjeta;
 }
@@ -757,7 +872,6 @@ int agregarTarjeta(Usuario *usuario){
 
 Usuario *iniciarSesion(){
     Usuario *usuario = NULL;
-    ;
     char auxcorreo[MAX_TEXTO];
     char auxpassword[MAX_TEXTO];
     char linea[MAX_LONGITUD];
@@ -825,6 +939,7 @@ Usuario *iniciarSesion(){
                 if(aux){
                     usuario->ID = atoi(aux);
                 }
+
                 if(strcmp(usuario->password, auxpassword) == 0){ // Verificar contraseña
                     buscar = 1;
                     break;
@@ -837,12 +952,9 @@ Usuario *iniciarSesion(){
     }
     fclose(archivo);
 
-    if (buscar == 1)
-    {
+    if (buscar == 1){
         return usuario;
-    }
-    else
-    {
+    }else{
         printf("\nSus datos son incorrectos. Vuelva a intentarlo.\n");
         liberarUsuario(usuario);
         return NULL;
@@ -880,31 +992,31 @@ void desencriptarBasico(char *password){
     }
 }
 
-int check(const char *numTarjeta){ // Luhn algorithm
+int check(const char *card_number){ // Luhn algorithm
     int add = 0;
-    int longitud = strlen(numTarjeta);
-    int dobledigito = 0;
-    for(int i = longitud - 1; i >= 0; i--){
-        int digit = numTarjeta[i] - '0';
-        if(dobledigito ){
+    int length = strlen(card_number);
+    int double_digit = 0;
+    for(int i = length - 1; i >= 0; i--){
+        int digit = card_number[i] - '0';
+        if(double_digit){
             digit = digit * 2;
             if(digit > 9){
                 digit = digit - 9;
             }
         }
         add = add + digit;
-        dobledigito  = !doubledigito;
+        double_digit = !double_digit;
     }
     return(add % 10 == 0);
 }
 
-const char *card_type(const char *numTarjeta){
-    int longitud = strlen(numTarjeta);
-    if((longitud == 15) && (numTarjeta[0] == '3') && (numTarjeta[1] == '4' || numTarjeta[1] == '7')){
+const char *card_type(const char *card_number){
+    int length = strlen(card_number);
+    if((length == 15) && (card_number[0] == '3') && (card_number[1] == '4' || card_number[1] == '7')){
         return "AMEX";
-    }else if((longitud == 16) && (numTarjeta[0] == '5') && (numTarjeta[1] >= '1' && numTarjeta[1] <= '5')){
+    }else if((length == 16) && (card_number[0] == '5') && (card_number[1] >= '1' && card_number[1] <= '5')){
         return "MASTERCARD";
-    }else if((longitud == 13 || longitud == 16) && (numTarjeta[0] == '4')){
+    }else if((length == 13 || length == 16) && (card_number[0] == '4')){
         return "VISA";
     }else{
         return "INVALID";
@@ -919,6 +1031,15 @@ void liberarArticulo(Articulo *articulo){
     free(articulo->nombre);
     free(articulo->marca);
     free(articulo);
+}
+
+void liberarArreglo(Arreglo *arreglo){
+    for(int i = 0; i < arreglo->tam; i++){
+        free(arreglo->articulo[i].nombre);
+        free(arreglo->articulo[i].marca);
+    }
+    free(arreglo->articulo);
+    free(arreglo);
 }
 
 void liberarNodo(Nodo *nodo){

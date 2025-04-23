@@ -2,16 +2,9 @@
 #include "funciones.h"
 
 int main(void){
-    
-    int opcion,aux;
-    char *nameaux;
-    float pagoTotal;
-    Articulo *miArticulo;
-    Articulo *articulo_buscar;
-    Cola *cola;
-    cola = crearCola();
-    miArticulo = crearArticulo();
-    Usuario *usuario;
+    int opcion;
+    Cola *cola = crearCola();
+    Usuario *usuario = crearUsuario();
     usuario = miCuenta(usuario);
     char menu[] = "\n---- MENÚ PRINCIPAL ----\n1) Información personal\n2) Explorar\n3) Buscar productos\n4) Mi carrito\n5) Salir\nIngrese opción: ";
     do{
@@ -22,12 +15,10 @@ int main(void){
                 imprimirUsuario(usuario);
                 break;
             case 2: //Explorar
-                miArticulo = crearArticulo();
-                capturarArticulo(miArticulo);
-                insertar(cola, miArticulo);
+                explorar(cola);
                 break;
             case 3: //Buscar productos
-                articulo_buscar = buscarArticulo(cola);
+                buscarArticulo(cola);
                 break;
             case 4: //Mi carrito
                 miCarrito(cola, usuario);
@@ -35,6 +26,7 @@ int main(void){
         }
     }while(opcion != 5);
     liberarCola(cola);
-    printf("Gracias por usar SellTrack\n");
+    liberarUsuario(usuario);
+    printf("\n!Gracias por usar SellTrack!\n");
     return 0;
 }
